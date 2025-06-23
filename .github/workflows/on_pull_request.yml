@@ -3,6 +3,11 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
 
+permissions:
+  deployments: write        # allow creating deployments
+  pull-requests: write      # allow commenting on PRs
+  contents: read            # minimal read access to repo, if needed
+
 env:
   NODE_VERSION: 20
 
