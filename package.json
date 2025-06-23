@@ -1,0 +1,24 @@
+{
+  "name": "zephyr-preview-environment-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --minify --outfile=index.js",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.2",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "esbuild": "^0.25.5",
+    "prettier": "^3.6.0",
+    "typescript": "^5.8.3"
+  }
+}

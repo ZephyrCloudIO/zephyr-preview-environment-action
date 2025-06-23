@@ -1,0 +1,12 @@
+name: "Zephyr Preview Environment"
+description: "Create a preview environment using Zephyr (PR-only action)"
+inputs:
+  github_token:
+    description: "The GitHub token to use for the action"
+    required: true
+outputs:
+  preview_url:
+    description: "The URL of the preview environment"
+runs:
+  using: "node22"
+  main: 'index.js'
