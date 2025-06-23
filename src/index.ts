@@ -6,7 +6,7 @@ import { createOrUpdateComment } from "./create-or-update-comment";
 import { createPreviewEnvironment } from "./create-preview-environment";
 import { validateEventContext } from "./validate-event-context";
 
-async () => {
+(async () => {
   console.log("Hello, world!");
 
   try {
@@ -39,4 +39,4 @@ async () => {
       `Action failed: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
-};
+})();
