@@ -8,5 +8,5 @@ outputs:
   preview_url:
     description: "The URL of the preview environment"
 runs:
-  using: "node22"
+  using: "node20"
   main: 'index.js'

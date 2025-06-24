@@ -3,8 +3,13 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
 
+permissions:
+  deployments: write        # allow creating deployments
+  pull-requests: write      # allow commenting on PRs
+  contents: read            # minimal read access to repo, if needed
+
 env:
-  NODE_VERSION: 22
+  NODE_VERSION: 20
 
 jobs:
   build:
@@ -16,7 +21,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.12.2
           run_install: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
@@ -29,7 +34,7 @@ jobs:
         run: pnpm i
 
       - name: Deploy Preview Environment
-        uses: ./.
+        uses: ./
         id: preview_action
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
