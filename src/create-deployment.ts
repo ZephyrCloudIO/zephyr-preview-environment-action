@@ -2,8 +2,10 @@ import * as github from "@actions/github";
 
 export async function createDeployment(
   githubToken: string,
-  environmentUrl: string,
+  environmentUrl: string
 ): Promise<void | string> {
+  console.log("Creating deployment");
+
   try {
     const octokit = github.getOctokit(githubToken);
     const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
