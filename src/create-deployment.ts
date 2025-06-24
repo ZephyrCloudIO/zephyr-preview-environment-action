@@ -6,6 +6,7 @@ export async function createDeployment(
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
+    const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
     const commonParameters = {
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -15,7 +16,7 @@ export async function createDeployment(
 
     const deployment = await octokit.rest.repos.createDeployment({
       ...commonParameters,
-      ref: github.context.ref,
+      ref: branch || github.context.ref,
       auto_merge: false,
       required_contexts: [],
     });
