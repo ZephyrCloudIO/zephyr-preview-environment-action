@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm i
@@ -36,4 +36,4 @@ jobs:
 
       - name: Preview Deployment URL
         if: steps.preview_action.outputs.preview_url
-        run: echo "Preview available at: ${{ steps.preview_action.outputs.preview_url }}"
+        run: echo "Preview available at ${{ steps.preview_action.outputs.preview_url }}"
