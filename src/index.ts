@@ -7,8 +7,6 @@ import { createPreviewEnvironment } from "./create-preview-environment";
 import { validateEventContext } from "./validate-event-context";
 
 (async () => {
-  console.log("Hello, world!");
-
   try {
     // Validate that this is a pull request and pull request data is available
     if (!validateEventContext()) {
