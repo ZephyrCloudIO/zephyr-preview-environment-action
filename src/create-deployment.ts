@@ -30,14 +30,6 @@ export async function createDeployment(
         auto_inactive: true,
       });
     }
-
-    if (github.context.payload.pull_request?.state === "closed") {
-      await octokit.rest.repos.createDeploymentStatus({
-        ...commonParameters,
-        deployment_id: deployment.data["id"],
-        state: "inactive",
-      });
-    }
   } catch (error) {
     return error instanceof Error
       ? error.message
