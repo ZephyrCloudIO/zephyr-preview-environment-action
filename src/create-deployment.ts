@@ -2,7 +2,7 @@ import * as github from "@actions/github";
 
 export async function createDeployment(
   githubToken: string,
-  environmentUrl: string
+  environmentUrl: string,
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
