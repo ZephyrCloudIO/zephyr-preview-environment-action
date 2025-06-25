@@ -26,7 +26,10 @@ export async function createDeployment(
         ...commonParameters,
         deployment_id: deployment.data.id,
         environment_url: environmentUrl,
-        state: "success",
+        state:
+          github.context.payload.pull_request?.state === "closed"
+            ? "inactive"
+            : "success",
         auto_inactive: true,
       });
     }
