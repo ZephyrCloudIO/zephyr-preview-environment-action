@@ -2,7 +2,7 @@ import * as github from "@actions/github";
 
 export async function createDeployment(
   githubToken: string,
-  environmentUrl: string,
+  environmentUrl: string
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
@@ -26,11 +26,16 @@ export async function createDeployment(
         ...commonParameters,
         deployment_id: deployment.data.id,
         environment_url: environmentUrl,
-        state:
-          github.context.payload.pull_request?.state === "closed"
-            ? "inactive"
-            : "success",
+        state: "success",
         auto_inactive: true,
+      });
+    }
+
+    if (github.context.payload.pull_request?.state === "closed") {
+      await octokit.rest.repos.createDeploymentStatus({
+        ...commonParameters,
+        deployment_id: deployment.data["id"],
+        state: "inactive",
       });
     }
   } catch (error) {
