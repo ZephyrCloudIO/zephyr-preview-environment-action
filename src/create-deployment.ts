@@ -25,6 +25,7 @@ export async function createDeployment(
       ref,
       auto_merge: false,
       required_contexts: [],
+      transient_environment: true,
     });
 
     if ("id" in deployment.data) {
