@@ -1,7 +1,7 @@
 import * as github from "@actions/github";
 
 // TODO: Create JobSummary for the deployment
-// TODO: Figure out a way to deactivate the deployment when the PR is closed without iterating over all deployments
+// TODO: Figure out a way to deactivate the deployments when the PR is closed without iterating over all deployments
 export async function createDeployment(
   githubToken: string,
   environmentUrl: string,
