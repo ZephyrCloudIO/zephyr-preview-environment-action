@@ -3,7 +3,7 @@ import * as github from "@actions/github";
 // TODO: We could use another approach to store the comment id, so we don't have to fetch all comments every time
 export async function createOrUpdateComment(
   githubToken: string,
-  previewUrl: string
+  previewUrl: string,
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
@@ -20,7 +20,7 @@ export async function createOrUpdateComment(
 
     // Find the comment with the preview environment ready message
     const comment = comments.find((comment) =>
-      comment.body?.includes("🚀 **Preview Environment Ready!**")
+      comment.body?.includes("🚀 **Preview Environment Ready!**"),
     );
 
     const commentBody = getCommentBody(previewUrl);
@@ -58,24 +58,24 @@ function getCommentBody(previewUrl: string): string {
   if (isPrClosed) {
     return `**Preview Environment Deactivated!**\n\n
 | Name | Status | URL |
-|------|--------|-----|
+|--------|--------|--------|
 | Preview | ❌ Deactivated | [${previewUrl}](${previewUrl}) |
 | Latest Version | ✅ Active | [${previewUrl}](${previewUrl}) |
 
 **Details:**
 - **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Deactivated:** ${new Date().toLocaleString()}`;
+- **Deactivated:** ${new Date().toISOString()}`;
   }
 
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
-|------|--------|-----|
+|--------|--------|--------|
 | 😎 Preview Environment | ✅ Active | [${previewUrl}](${previewUrl}) |
 | 🔥 Version | ✅ Active | [${previewUrl}](${previewUrl}) |
 
 **Details:**
 - **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Created:** ${new Date().toLocaleString()}`;
+- **Created:** ${new Date().toISOString()}`;
 }
