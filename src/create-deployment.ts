@@ -1,24 +1,31 @@
 import * as github from "@actions/github";
 
+// TODO: Create JobSummary for the deployment
 export async function createDeployment(
   githubToken: string,
   environmentUrl: string,
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
+    const { owner, repo } = github.context.repo;
+    const {
+      number: prNumber,
+      head: { ref },
+    } = github.context.payload.pull_request!;
 
     const commonParameters = {
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      description: `Preview environment for PR #${github.context.payload.pull_request?.number}`,
-      environment: `Preview/PR-${github.context.payload.pull_request?.number}`,
+      owner,
+      repo,
+      description: `Preview environment for PR #${prNumber}`,
+      environment: `Preview/PR-${prNumber}`,
     };
 
     const deployment = await octokit.rest.repos.createDeployment({
       ...commonParameters,
-      ref: github.context.payload.pull_request?.head?.ref,
+      ref,
       auto_merge: false,
       required_contexts: [],
+      transient_environment: true,
     });
 
     if ("id" in deployment.data) {
