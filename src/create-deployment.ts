@@ -6,7 +6,7 @@ export async function createDeployment(
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
-    const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
+
     const commonParameters = {
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -16,7 +16,7 @@ export async function createDeployment(
 
     const deployment = await octokit.rest.repos.createDeployment({
       ...commonParameters,
-      ref: branch || github.context.ref,
+      ref: github.context.payload.pull_request?.head?.ref,
       auto_merge: false,
       required_contexts: [],
     });
@@ -26,7 +26,10 @@ export async function createDeployment(
         ...commonParameters,
         deployment_id: deployment.data.id,
         environment_url: environmentUrl,
-        state: "success",
+        state:
+          github.context.payload.pull_request?.state === "closed"
+            ? "inactive"
+            : "success",
         auto_inactive: true,
       });
     }

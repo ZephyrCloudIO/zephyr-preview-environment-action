@@ -23,6 +23,7 @@ export async function createOrUpdateComment(
     );
 
     const commentBody = `🚀 **Preview Environment Ready!**\n\nPreview URL: ${previewUrl}`;
+    const commentBodyForClosedPR = `🚀 **Preview Environment Deactivated!**\n\nPreview URL: ${previewUrl}`;
 
     // If the comment exists, update it
     if (comment) {
@@ -30,7 +31,10 @@ export async function createOrUpdateComment(
         owner,
         repo,
         comment_id: comment.id,
-        body: commentBody,
+        body:
+          github.context.payload.pull_request?.state === "closed"
+            ? commentBodyForClosedPR
+            : commentBody,
       });
     } else {
       await octokit.rest.issues.createComment({
