@@ -12,12 +12,13 @@ export async function createDeployment(
       number: prNumber,
       head: { ref },
     } = github.context.payload.pull_request!;
+    const environmentName = `preview-env-${prNumber}`;
 
     const commonParameters = {
       owner,
       repo,
       description: `Preview environment for PR #${prNumber}`,
-      environment: `Preview/PR-${prNumber}`,
+      environment: environmentName,
     };
 
     const deployment = await octokit.rest.repos.createDeployment({
@@ -25,7 +26,6 @@ export async function createDeployment(
       ref,
       auto_merge: false,
       required_contexts: [],
-      transient_environment: true,
     });
 
     if ("id" in deployment.data) {
@@ -36,6 +36,24 @@ export async function createDeployment(
         state: "success",
         auto_inactive: true,
       });
+    }
+
+    const prIsClosed = github.context.payload.pull_request?.state === "closed";
+    if (prIsClosed) {
+      const { data: deployments } = await octokit.rest.repos.listDeployments({
+        ...commonParameters,
+        per_page: 1,
+      });
+
+      for (const existingDeployment of deployments) {
+        await octokit.rest.repos.createDeploymentStatus({
+          ...commonParameters,
+          deployment_id: existingDeployment.id,
+          environment_url: environmentUrl,
+          state: "inactive",
+          auto_inactive: true,
+        });
+      }
     }
   } catch (error) {
     return error instanceof Error
