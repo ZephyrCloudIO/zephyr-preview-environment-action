@@ -71,7 +71,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``)}w.g
 **Details:**
 - **Branch:** \`${t}\`
 - **Latest Commit:** \`${r}\`
-- **Deactivated:** ${new Date().toISOString()}`:`\u{1F680} **Preview Environment Ready!**
+- **Deactivated:** ${new Date().toLocaleString()}`:`\u{1F680} **Preview Environment Ready!**
 
 
 | Name | Status | URL |
@@ -82,7 +82,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``)}w.g
 **Details:**
 - **Branch:** \`${t}\`
 - **Latest Commit:** \`${r}\`
-- **Created:** ${new Date().toISOString()}`}function _d(){try{return"https://preview.test.zephyr.com"}catch(A){return A instanceof Error?A.message:"Unknown error creating preview environment"}}var Mg=xr(Ns());function xd(){return Mg.context.eventName==="pull_request"&&Mg.context.payload.pull_request!==void 0}(async()=>{try{if(!xd()){$e.info("This action can only be triggered on pull requests and pull request data must be available. Current event: "+Yd.context.eventName);return}let A=_d();$e.info(`Preview environment created: ${A}`);let e=$e.getInput("github_token");await Md(e,A),await vd(e,A),$e.setOutput("preview_url",A)}catch(A){$e.setFailed(`Action failed: ${A instanceof Error?A.message:"Unknown error"}`)}})();
+- **Created:** ${new Date().toLocaleString()}`}function _d(){try{return"https://preview.test.zephyr.com"}catch(A){return A instanceof Error?A.message:"Unknown error creating preview environment"}}var Mg=xr(Ns());function xd(){return Mg.context.eventName==="pull_request"&&Mg.context.payload.pull_request!==void 0}(async()=>{try{if(!xd()){$e.info("This action can only be triggered on pull requests and pull request data must be available. Current event: "+Yd.context.eventName);return}let A=_d();$e.info(`Preview environment created: ${A}`);let e=$e.getInput("github_token");await Md(e,A),await vd(e,A),$e.setOutput("preview_url",A)}catch(A){$e.setFailed(`Action failed: ${A instanceof Error?A.message:"Unknown error"}`)}})();
 /*! Bundled license information:
 
 undici/lib/fetch/body.js:

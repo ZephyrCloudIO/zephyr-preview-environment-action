@@ -65,7 +65,7 @@ function getCommentBody(previewUrl: string): string {
 **Details:**
 - **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Deactivated:** ${new Date().toISOString()}`;
+- **Deactivated:** ${new Date().toLocaleString()}`;
   }
 
   return `🚀 **Preview Environment Ready!**\n\n
@@ -77,5 +77,5 @@ function getCommentBody(previewUrl: string): string {
 **Details:**
 - **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Created:** ${new Date().toISOString()}`;
+- **Created:** ${new Date().toLocaleString()}`;
 }
