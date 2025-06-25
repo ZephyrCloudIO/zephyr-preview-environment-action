@@ -1,6 +1,7 @@
 import * as github from "@actions/github";
 
 // TODO: Create JobSummary for the deployment
+// TODO: Figure out a way to deactivate the deployments when the PR is closed without iterating over all deployments
 export async function createDeployment(
   githubToken: string,
   environmentUrl: string,
@@ -38,6 +39,7 @@ export async function createDeployment(
       });
     }
 
+    // Deactivate all previous deployments for this PR
     const prIsClosed = github.context.payload.pull_request?.state === "closed";
     if (prIsClosed) {
       const { data: deployments } = await octokit.rest.repos.listDeployments({
