@@ -38,19 +38,22 @@ export async function createDeployment(
       });
     }
 
-    const { data: deployments } = await octokit.rest.repos.listDeployments({
-      ...commonParameters,
-      per_page: 1,
-    });
-
-    for (const existingDeployment of deployments) {
-      await octokit.rest.repos.createDeploymentStatus({
+    const prIsClosed = github.context.payload.pull_request?.state === "closed";
+    if (prIsClosed) {
+      const { data: deployments } = await octokit.rest.repos.listDeployments({
         ...commonParameters,
-        deployment_id: existingDeployment.id,
-        environment_url: environmentUrl,
-        state: "inactive",
-        auto_inactive: true,
+        per_page: 1,
       });
+
+      for (const existingDeployment of deployments) {
+        await octokit.rest.repos.createDeploymentStatus({
+          ...commonParameters,
+          deployment_id: existingDeployment.id,
+          environment_url: environmentUrl,
+          state: "inactive",
+          auto_inactive: true,
+        });
+      }
     }
   } catch (error) {
     return error instanceof Error
