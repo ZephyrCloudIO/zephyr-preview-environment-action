@@ -42,7 +42,7 @@ export async function createDeployment(
     if (prIsClosed) {
       const { data: deployments } = await octokit.rest.repos.listDeployments({
         ...commonParameters,
-        per_page: 1,
+        per_page: 2,
       });
 
       for (const existingDeployment of deployments) {
