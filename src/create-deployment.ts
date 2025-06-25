@@ -2,7 +2,7 @@ import * as github from "@actions/github";
 
 export async function createDeployment(
   githubToken: string,
-  environmentUrl: string
+  environmentUrl: string,
 ): Promise<void | string> {
   try {
     const octokit = github.getOctokit(githubToken);
@@ -11,7 +11,7 @@ export async function createDeployment(
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
       description: `Preview environment for PR #${github.context.payload.pull_request?.number}`,
-      environment: `Preview-${github.context.payload.pull_request?.number}`,
+      environment: `Preview/PR-${github.context.payload.pull_request?.number}`,
     };
 
     const deployment = await octokit.rest.repos.createDeployment({
