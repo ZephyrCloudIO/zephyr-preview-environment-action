@@ -34,6 +34,11 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
+      - name: Build example
+        env:
+          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+        run: pnpm run build:example
+
       - name: Deploy Preview Environment
         uses: ./
         id: preview_action

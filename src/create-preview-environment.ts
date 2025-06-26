@@ -1,10 +1,13 @@
+import { getAppDeployResult } from "zephyr-agent";
+
 // TODO: Implement Retry Pattern
 // TODO: Handle cache
-export function createPreviewEnvironment(): string {
+export async function createPreviewEnvironment() {
   try {
-    const previewUrl = "https://preview.test.zephyr.com";
+    const appId = "vite-project.zephyr-preview-environment-action.leooliveirax";
+    const previewUrl = await getAppDeployResult(appId);
 
-    return previewUrl;
+    return previewUrl?.urls[0];
   } catch (error) {
     return error instanceof Error
       ? error.message

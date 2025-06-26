@@ -19,17 +19,16 @@ import { validateTriggeredEvent } from "./validate-triggered-event";
     }
 
     // Create preview environment on Zephyr
-    const previewUrl = createPreviewEnvironment();
-    core.info(`Preview environment created: ${previewUrl}`);
+    const previewUrl = await createPreviewEnvironment();
 
     // Get GitHub token
     const githubToken = core.getInput("github_token");
 
     // Create deployment on GitHub
-    await createDeployment(githubToken, previewUrl);
+    await createDeployment(githubToken, previewUrl!);
 
     // Create or update comment on GitHub PR
-    await createOrUpdateComment(githubToken, previewUrl);
+    await createOrUpdateComment(githubToken, previewUrl!);
 
     // Set output
     core.setOutput("preview_url", previewUrl);
