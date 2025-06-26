@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --minify --outfile=index.js",
+    "build:example": "cd zephyr-examples/vite-project && pnpm i && pnpm run build",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
@@ -13,7 +14,8 @@
   "packageManager": "pnpm@10.12.2",
   "dependencies": {
     "@actions/core": "^1.11.1",
-    "@actions/github": "^6.0.1"
+    "@actions/github": "^6.0.1",
+    "zephyr-agent": "0.0.0-canary-20250626143056"
   },
   "devDependencies": {
     "@types/node": "^24.0.3",
