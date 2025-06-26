@@ -13,7 +13,7 @@ export async function createDeployment(
       number: prNumber,
       head: { ref },
     } = github.context.payload.pull_request!;
-    const environmentName = `preview-env-${prNumber}`;
+    const environmentName = `Preview/PR-${prNumber}`;
 
     const commonParameters = {
       owner,
