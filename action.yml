@@ -4,9 +4,12 @@ inputs:
   github_token:
     description: "The GitHub token to use for the action"
     required: true
+  application_uuid:
+    description: "The UUID of the application to use for the preview environment"
+    required: true
 outputs:
-  preview_url:
+  preview_environment_url:
     description: "The URL of the preview environment"
 runs:
   using: "node20"
-  main: 'index.js'
+  main: "index.js"
