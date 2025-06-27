@@ -12,7 +12,7 @@ export function getCommentBody(
   if (isPrClosed) {
     return `**Preview Environment Deactivated!**\n\n
   | Name | Status | URL |
-  |--------|--------|--------|
+  |--------|-----------|--------|
     | Preview | ❌ Deactivated | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
   | Latest Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
   
@@ -24,7 +24,7 @@ export function getCommentBody(
 
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
-|--------|--------|--------|
+|--------|-----------|--------|
 | 😎 Preview Environment | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 | 🔥 Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 

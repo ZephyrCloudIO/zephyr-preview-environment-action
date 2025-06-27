@@ -262,7 +262,7 @@ ${(0,nA.cyanBright)(n)}`})),this.build_id=null,this.snapshotId=null,this.version
 
 
   | Name | Status | URL |
-  |--------|--------|--------|
+  |--------|-----------|--------|
     | Preview | \u274C Deactivated | [${e}](${e}) |
   | Latest Version | \u2705 Active | [${e}](${e}) |
   
@@ -273,7 +273,7 @@ ${(0,nA.cyanBright)(n)}`})),this.build_id=null,this.snapshotId=null,this.version
 
 
 | Name | Status | URL |
-|--------|--------|--------|
+|--------|-----------|--------|
 | \u{1F60E} Preview Environment | \u2705 Active | [${e}](${e}) |
 | \u{1F525} Version | \u2705 Active | [${e}](${e}) |
 

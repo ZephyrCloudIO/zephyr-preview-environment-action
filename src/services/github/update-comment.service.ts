@@ -27,6 +27,7 @@ export async function updateComment(
 
   const commentBody = getCommentBody(previewEnvironmentUrl, isPrClosed);
 
+  // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
   if (!comment && !isPrClosed) {
     await createComment(previewEnvironmentUrl);
 
