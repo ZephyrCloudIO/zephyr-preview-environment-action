@@ -11,20 +11,20 @@ export function getCommentBody(
 
   if (isPrClosed) {
     return `**Preview Environment Deactivated!**\n\n
-  | Name | Status | URL |
-  |--------|-----------|--------|
-    | Preview | ❌ Deactivated | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
-  | Latest Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
-  
-  **Details:**
-  - **Branch:** \`${branch}\`
-  - **Latest Commit:** \`${latestCommit}\`
-  - **Deactivated:** ${new Date().toLocaleString()}`;
+| Name | Status | URL |
+|----|----------|--------|
+| Preview | ❌ Deactivated | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+| Latest Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+
+**Details:**
+- **Branch:** \`${branch}\`
+- **Latest Commit:** \`${latestCommit}\`
+- **Deactivated:** ${new Date().toLocaleString()}`;
   }
 
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
-|--------|-----------|--------|
+|----|----------|--------|
 | 😎 Preview Environment | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 | 🔥 Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 
