@@ -11,13 +11,16 @@ import { isPullRequestEvent } from "./services/github/is-pull-request-event.serv
     if (!isPullRequestEvent()) {
       core.warning(
         "This action can only be triggered on pull requests and pull request data must be available. Current event: " +
-          github.context.eventName,
+          github.context.eventName
       );
 
       return;
     }
 
     const prState = github.context.payload.pull_request?.state;
+    core.info(`PR state: ${prState}`);
+    core.setOutput("preview_environment_url", prState);
+
     switch (prState) {
       case "opened":
         await handlePullRequestOpened();
@@ -32,7 +35,7 @@ import { isPullRequestEvent } from "./services/github/is-pull-request-event.serv
     }
   } catch (error) {
     core.setFailed(
-      `Action failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
+      `Action failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`
     );
   }
 })();
