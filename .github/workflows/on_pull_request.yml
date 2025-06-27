@@ -41,10 +41,10 @@ jobs:
 
       - name: Deploy Preview Environment
         uses: ./
-        id: preview_action
+        id: preview_environment_action
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Preview Deployment URL
-        if: steps.preview_action.outputs.preview_url
-        run: echo "Preview available at ${{ steps.preview_action.outputs.preview_url }}"
+        if: steps.preview_environment_action.outputs.preview_environment_url
+        run: echo "Preview available at ${{ steps.preview_environment_action.outputs.preview_environment_url }}"
