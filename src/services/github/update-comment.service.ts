@@ -1,6 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
+import { createComment } from "./create-comment.service";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function updateComment(
@@ -25,6 +26,12 @@ export async function updateComment(
   );
 
   const commentBody = getCommentBody(previewEnvironmentUrl, isPrClosed);
+
+  if (!comment && !isPrClosed) {
+    await createComment(previewEnvironmentUrl);
+
+    return;
+  }
 
   await octokit.rest.issues.updateComment({
     owner,
