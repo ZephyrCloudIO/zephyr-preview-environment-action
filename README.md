@@ -115,9 +115,10 @@ permissions:
 
 ## 📥 Inputs
 
-| Input          | Description                 | Required | Default |
-| -------------- | --------------------------- | -------- | ------- |
-| `github_token` | GitHub token for API access | ✅ Yes   | -       |
+| Input              | Description                                                    | Required | Default |
+| ------------------ | -------------------------------------------------------------- | -------- | ------- |
+| `github_token`     | GitHub token for API access                                    | ✅ Yes   | -       |
+| `application_uuid` | The UUID of the application to use for the preview environment | ✅ Yes   | -       |
 
 ## 📤 Outputs
 
