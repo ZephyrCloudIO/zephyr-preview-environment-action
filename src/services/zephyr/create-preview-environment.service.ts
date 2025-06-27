@@ -1,10 +1,11 @@
+import * as core from "@actions/core";
 import { getAppDeployResult } from "zephyr-agent";
 
 // TODO: Implement Retry Pattern
 // TODO: Handle cache
 export async function createPreviewEnvironment(): Promise<string> {
-  const appId = "vite-project.zephyr-preview-environment-action.leooliveirax";
-  const previewUrl = await getAppDeployResult(appId);
+  const applicationUuid = core.getInput("application_uuid");
+  const previewUrl = await getAppDeployResult(applicationUuid);
 
   // Should it throw an error?
   if (!previewUrl) {
