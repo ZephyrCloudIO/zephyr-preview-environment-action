@@ -36,9 +36,9 @@ jobs:
 
       - name: Build example
         env:
-          ZE_SECRET_TOKEN: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vbG9jYWxob3N0OjMzMzMvZW1haWwiOiJYbGVvbmFyZG8ueC5vbGl2ZWlyYVhAZ21haWwuY29tIiwiaHR0cDovL2xvY2FsaG9zdDozMzMzL25hbWUiOiJMZW8gT2xpdmVpcmEiLCJodHRwOi8vbG9jYWxob3N0OjMzMzMvZW1haWxfdmVyaWZpZWQiOnRydWUsImh0dHBzOi8vYXBpLWRldi56ZXBoeXItY2xvdWQuaW8vZW1haWwiOiJYbGVvbmFyZG8ueC5vbGl2ZWlyYVhAZ21haWwuY29tIiwiaHR0cHM6Ly9hcGktZGV2LnplcGh5ci1jbG91ZC5pby9uYW1lIjoiTGVvIE9saXZlaXJhIiwiaHR0cHM6Ly9hcGktZGV2LnplcGh5ci1jbG91ZC5pby9lbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9kZXYtYXV0aC56ZXBoeXItY2xvdWQuaW8vIiwic3ViIjoiZ2l0aHVifDI4ODQzNDM4IiwiYXVkIjpbImh0dHBzOi8vYXBpLWRldi56ZXBoeXItY2xvdWQuaW8iLCJodHRwczovL3plcGh5ci1kZXYtZXUuZXUuYXV0aDAuY29tL3VzZXJpbmZvIl0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhenAiOiJac3FMM1BjUGQ1VHQybU5aaW1ndkY1U1J2dnd2WXF6YSIsImVtYWlsIjoiWGxlb25hcmRvLngub2xpdmVpcmFYQGdtYWlsLmNvbSIsIm5hbWUiOiJMZW8gT2xpdmVpcmEiLCJ0b2tlbk5hbWUiOiJMZW8gT2xpdmVpcmEgKFhsZW9uYXJkby54Lm9saXZlaXJhWEBnbWFpbC5jb20pIC0gYXV0aDAgdG9rZW4iLCJ0b2tlblR5cGUiOiJhdXRoMCIsImlhdCI6MTc1MTMyNDAxMywiZXhwIjozMzI1NTc4ODAxM30.Gy_rZPhwBs-Abc42kS_eoRwaL3BsIJc4t-i-QWANgjM"
-          ZE_API: "https://api-dev.zephyr-cloud.io"
-          ZE_API_GATE: "https://zeapi.zephyrcloudapp.dev"
+          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+          ZE_API: ${{ vars.ZE_API }}
+          ZE_API_GATE: ${{ vars.ZE_API_GATE }}
         run: pnpm run build:example
 
       - name: Deploy preview environment
