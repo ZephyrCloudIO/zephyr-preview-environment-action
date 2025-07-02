@@ -46,7 +46,6 @@ jobs:
         id: preview_environment_action
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          application_uuid: "vite-project.zephyr-preview-environment-action.zephyrcloudio"
 
       - name: Preview deployment URL
         if: steps.preview_environment_action.outputs.preview_environment_url
