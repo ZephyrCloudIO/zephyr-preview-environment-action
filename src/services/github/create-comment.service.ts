@@ -11,7 +11,12 @@ export async function createComment(
 
   const { repo, payload } = github.context;
   const { owner, repo: repoName } = repo;
-  const { number: prNumber } = payload.pull_request!;
+
+  if (!payload.pull_request) {
+    throw new Error("Pull request data not found");
+  }
+
+  const { number: prNumber } = payload.pull_request;
 
   const commentBody = getCommentBody(previewEnvironmentUrl);
 

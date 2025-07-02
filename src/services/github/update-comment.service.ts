@@ -13,7 +13,12 @@ export async function updateComment(
 
   const { repo, payload } = github.context;
   const { owner, repo: repoName } = repo;
-  const { number: prNumber } = payload.pull_request!;
+
+  if (!payload.pull_request) {
+    throw new Error("Pull request data not found");
+  }
+
+  const { number: prNumber } = payload.pull_request;
 
   const { data: comments } = await octokit.rest.issues.listComments({
     owner,
