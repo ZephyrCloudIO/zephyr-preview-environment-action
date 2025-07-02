@@ -27,17 +27,19 @@ export async function updateComment(
 
   const commentBody = getCommentBody(previewEnvironmentUrl, isPrClosed);
 
-  // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
-  if (!comment && !isPrClosed) {
-    await createComment(previewEnvironmentUrl);
+  if (comment) {
+    await octokit.rest.issues.updateComment({
+      owner,
+      repo: repoName,
+      comment_id: comment.id,
+      body: commentBody,
+    });
 
     return;
   }
 
-  await octokit.rest.issues.updateComment({
-    owner,
-    repo: repoName,
-    comment_id: comment!.id,
-    body: commentBody,
-  });
+  // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
+  if (!isPrClosed) {
+    await createComment(previewEnvironmentUrl);
+  }
 }

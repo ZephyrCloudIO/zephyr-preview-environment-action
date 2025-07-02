@@ -1,6 +1,13 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
+type CommonParameters = {
+  owner: string;
+  repo: string;
+  description: string;
+  environment: string;
+};
+
 // TODO: Create JobSummary for the deployment
 export async function createDeployment(
   previewEnvironmentUrl: string,
@@ -11,10 +18,17 @@ export async function createDeployment(
 
   const { repo, payload } = github.context;
   const { owner, repo: repoName } = repo;
+
+  if (!payload.pull_request) {
+    core.warning("Pull request data is not available");
+
+    return;
+  }
+
   const {
     number: prNumber,
     head: { ref },
-  } = payload.pull_request!;
+  } = payload.pull_request;
   const environmentName = `Preview/PR-${prNumber}`;
 
   const commonParameters = {
@@ -44,13 +58,6 @@ export async function createDeployment(
     await deactiveAllPreviousDeployments(octokit, commonParameters);
   }
 }
-
-type CommonParameters = {
-  owner: string;
-  repo: string;
-  description: string;
-  environment: string;
-};
 
 // TODO: Figure out a way to deactivate the deployments when the PR is closed without iterating over all deployments
 async function deactiveAllPreviousDeployments(

@@ -8,7 +8,7 @@ export async function createPreviewEnvironment(): Promise<string> {
   const previewUrl = await getAppDeployResult(applicationUuid);
 
   // Should it throw an error?
-  if (!previewUrl) {
+  if (!previewUrl?.urls.length) {
     throw new Error("Failed to create preview environment on Zephyr");
   }
 

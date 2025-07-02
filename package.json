@@ -1,7 +1,7 @@
 {
   "name": "zephyr-preview-environment-action",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create a preview environment using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --minify --outfile=index.js",
