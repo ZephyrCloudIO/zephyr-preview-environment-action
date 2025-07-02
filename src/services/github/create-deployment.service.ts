@@ -10,7 +10,7 @@ type CommonParameters = {
 
 // TODO: Create JobSummary for the deployment
 export async function createDeployment(
-  previewEnvironmentUrls: string[],
+  previewEnvironmentUrl: string,
   isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
@@ -20,9 +20,7 @@ export async function createDeployment(
   const { owner, repo: repoName } = repo;
 
   if (!payload.pull_request) {
-    core.warning("Pull request data is not available");
-
-    return;
+    throw new Error("Pull request data not found");
   }
 
   const {
@@ -49,7 +47,7 @@ export async function createDeployment(
     await octokit.rest.repos.createDeploymentStatus({
       ...commonParameters,
       deployment_id: deployment.data.id,
-      environment_url: previewEnvironmentUrls.join(","),
+      environment_url: previewEnvironmentUrl,
       state: "success",
     });
   }

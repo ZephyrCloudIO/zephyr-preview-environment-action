@@ -1,7 +1,7 @@
 import * as github from "@actions/github";
 
 export function getCommentBody(
-  previewEnvironmentUrls: string[],
+  previewEnvironmentUrl: string,
   isPrClosed?: boolean,
 ): string {
   const { payload } = github.context;
@@ -13,8 +13,8 @@ export function getCommentBody(
     return `**Preview Environment Deactivated!**\n\n
 | Name | Status | URL |
 |----|----------|--------|
-${previewEnvironmentUrls.map((url) => `| Preview | ❌ Deactivated | [${url}](${url}) |`).join("\n")}
-| Latest Version | ✅ Active | [${previewEnvironmentUrls[0]}](${previewEnvironmentUrls[0]}) |
+| Preview | ❌ Deactivated | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+| Latest Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 
 **Details:**
 - **Branch:** \`${branch}\`
@@ -25,8 +25,8 @@ ${previewEnvironmentUrls.map((url) => `| Preview | ❌ Deactivated | [${url}](${
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
 |----|----------|--------|
-${previewEnvironmentUrls.map((url) => `| 😎 Preview Environment | ✅ Active | [${url}](${url}) |`).join("\n")}
-| 🔥 Version | ✅ Active | [${previewEnvironmentUrls[0]}](${previewEnvironmentUrls[0]}) |
+| 😎 Preview Environment | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+| 🔥 Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
 
 **Details:**
 - **Branch:** \`${branch}\`

@@ -5,7 +5,7 @@ import { createComment } from "./create-comment.service";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function updateComment(
-  previewEnvironmentUrls: string[],
+  previewEnvironmentUrl: string,
   isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
@@ -25,7 +25,7 @@ export async function updateComment(
     comment.body?.includes("Preview Environment"),
   );
 
-  const commentBody = getCommentBody(previewEnvironmentUrls, isPrClosed);
+  const commentBody = getCommentBody(previewEnvironmentUrl, isPrClosed);
 
   if (comment) {
     await octokit.rest.issues.updateComment({
@@ -40,6 +40,6 @@ export async function updateComment(
 
   // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
   if (!isPrClosed) {
-    await createComment(previewEnvironmentUrls);
+    await createComment(previewEnvironmentUrl);
   }
 }

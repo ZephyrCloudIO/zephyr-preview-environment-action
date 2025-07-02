@@ -5,8 +5,8 @@ inputs:
     description: "The GitHub token to use for the action"
     required: true
 outputs:
-  preview_environment_urls:
-    description: "The URLs of the created preview environments"
+  preview_environment_url:
+    description: "The URL of the created preview environment"
 runs:
   using: "node20"
   main: "index.js"
