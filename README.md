@@ -10,7 +10,7 @@ A GitHub Action that automatically creates preview environments for your pull re
 - **GitHub Integration**: Posts preview URLs as comments and creates deployment status
 - **PR-only Operation**: Only runs on pull request events for security and efficiency
 
-## 🔮 Future Features
+## 🛬 Future Features
 
 We're actively working on these exciting features to enhance your preview environment experience:
 
@@ -92,7 +92,7 @@ jobs:
         run: pnpm run build
 
       - name: Deploy preview environment
-        uses: your-username/zephyr-preview-environment-action@v1
+        uses: ZephyrCloudIO/zephyr-preview-environment-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         id: preview
