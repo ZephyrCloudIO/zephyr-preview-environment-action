@@ -10,7 +10,7 @@ type CommonParameters = {
 
 // TODO: Create JobSummary for the deployment
 export async function createDeployment(
-  previewEnvironmentUrl: string,
+  previewEnvironmentUrls: string[],
   isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
@@ -49,7 +49,7 @@ export async function createDeployment(
     await octokit.rest.repos.createDeploymentStatus({
       ...commonParameters,
       deployment_id: deployment.data.id,
-      environment_url: previewEnvironmentUrl,
+      environment_url: previewEnvironmentUrls.join(","),
       state: "success",
     });
   }

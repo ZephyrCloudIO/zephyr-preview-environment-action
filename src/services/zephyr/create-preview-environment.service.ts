@@ -1,16 +1,16 @@
-import * as core from "@actions/core";
-import { getAppDeployResult } from "zephyr-agent";
+import { getAllAppDeployResults, getAllDeployedApps } from "zephyr-agent";
 
 // TODO: Implement Retry Pattern
 // TODO: Handle cache
-export async function createPreviewEnvironment(): Promise<string> {
-  const applicationUuid = core.getInput("application_uuid");
-  const previewUrl = await getAppDeployResult(applicationUuid);
+export async function createPreviewEnvironment(): Promise<string[]> {
+  const allDeployedApps = await getAllDeployedApps();
+  const allAppDeployResults = await getAllAppDeployResults();
 
-  // Should it throw an error?
-  if (!previewUrl?.urls.length) {
-    throw new Error("Failed to create preview environment on Zephyr");
-  }
+  const previewUrls = allDeployedApps.map((application_uuid) => {
+    const previewUrl = allAppDeployResults[application_uuid];
 
-  return previewUrl.urls[0];
+    return previewUrl.urls[0];
+  });
+
+  return previewUrls;
 }

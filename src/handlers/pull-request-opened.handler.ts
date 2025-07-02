@@ -5,11 +5,11 @@ import { createDeployment } from "../services/github/create-deployment.service";
 import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
 
 export async function handlePullRequestOpened(): Promise<void> {
-  const previewEnvironmentUrl = await createPreviewEnvironment();
+  const previewEnvironmentUrls = await createPreviewEnvironment();
 
-  await createDeployment(previewEnvironmentUrl);
+  await createDeployment(previewEnvironmentUrls);
 
-  await createComment(previewEnvironmentUrl);
+  await createComment(previewEnvironmentUrls);
 
-  core.setOutput("preview_environment_url", previewEnvironmentUrl);
+  core.setOutput("preview_environment_urls", previewEnvironmentUrls.join(","));
 }

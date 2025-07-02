@@ -5,12 +5,12 @@ import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
 
 export async function handlePullRequestClosed() {
-  const previewEnvironmentUrl = await createPreviewEnvironment();
+  const previewEnvironmentUrls = await createPreviewEnvironment();
 
   const isPrClosed = true;
-  await createDeployment(previewEnvironmentUrl, isPrClosed);
+  await createDeployment(previewEnvironmentUrls, isPrClosed);
 
-  await updateComment(previewEnvironmentUrl, isPrClosed);
+  await updateComment(previewEnvironmentUrls, isPrClosed);
 
-  core.setOutput("preview_environment_url", previewEnvironmentUrl);
+  core.setOutput("preview_environment_urls", previewEnvironmentUrls.join(","));
 }
