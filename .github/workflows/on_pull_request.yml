@@ -34,12 +34,12 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
-      - name: Build examples
+      - name: Build example
         env:
           ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
           ZE_API: ${{ vars.ZE_API }}
           ZE_API_GATE: ${{ vars.ZE_API_GATE }}
-        run: pnpm run build:examples
+        run: pnpm run build:example
 
       - name: Deploy preview environment
         uses: ./
