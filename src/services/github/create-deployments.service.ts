@@ -3,17 +3,9 @@ import * as github from "@actions/github";
 
 import { IPreviewEnvironment } from "../../types/preview-environment";
 
-type CommonParameters = {
-  owner: string;
-  repo: string;
-  description: string;
-  environment: string;
-};
-
 // TODO: Create JobSummary for the deployment
 export async function createDeployments(
   previewEnvironments: IPreviewEnvironment[],
-  isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
   const octokit = github.getOctokit(githubToken);

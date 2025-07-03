@@ -5,7 +5,7 @@ import { IPreviewEnvironment } from "../../types/preview-environment";
 
 export async function deactivateDeployments(
   previewEnvironments: IPreviewEnvironment[],
-) {
+): Promise<void> {
   const githubToken = core.getInput("github_token");
   const octokit = github.getOctokit(githubToken);
 

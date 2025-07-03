@@ -4,7 +4,7 @@ import { IPreviewEnvironment } from "../../types/preview-environment";
 
 // TODO: Implement Retry Pattern
 // TODO: Handle cache
-export async function createPreviewEnvironment(): Promise<
+export async function createPreviewEnvironments(): Promise<
   IPreviewEnvironment[]
 > {
   const allDeployedApps = await getAllDeployedApps();

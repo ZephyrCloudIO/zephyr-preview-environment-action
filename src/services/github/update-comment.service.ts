@@ -44,7 +44,7 @@ export async function updateComment(
     return;
   }
 
-  // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
+  // Workaround to create a comment if was not created properly in the pull_request_opened or pull_request_updated event by any reason
   if (!isPrClosed) {
     await createComment(previewEnvironments);
   }

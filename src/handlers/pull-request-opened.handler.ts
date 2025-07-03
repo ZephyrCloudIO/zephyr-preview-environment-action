@@ -2,10 +2,10 @@ import * as core from "@actions/core";
 
 import { createComment } from "../services/github/create-comment.service";
 import { createDeployments } from "../services/github/create-deployments.service";
-import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
+import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
 export async function handlePullRequestOpened(): Promise<void> {
-  const previewEnvironments = await createPreviewEnvironment();
+  const previewEnvironments = await createPreviewEnvironments();
 
   await createDeployments(previewEnvironments);
 
