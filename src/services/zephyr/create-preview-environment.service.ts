@@ -10,7 +10,7 @@ export async function createPreviewEnvironment(): Promise<
   const allDeployedApps = await getAllDeployedApps();
   const allAppDeployResults = await getAllAppDeployResults();
 
-  if (!allDeployedApps.length || !allAppDeployResults.length) {
+  if (!allDeployedApps.length) {
     throw new Error(
       "No deployed apps found. Make sure you have built it and deployed it to Zephyr",
     );
