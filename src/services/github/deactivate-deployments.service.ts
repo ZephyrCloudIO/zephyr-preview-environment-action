@@ -3,18 +3,9 @@ import * as github from "@actions/github";
 
 import { IPreviewEnvironment } from "../../types/preview-environment";
 
-type CommonParameters = {
-  owner: string;
-  repo: string;
-  description: string;
-  environment: string;
-};
-
-// TODO: Create JobSummary for the deployment
-export async function createDeployments(
+export async function deactivateDeployments(
   previewEnvironments: IPreviewEnvironment[],
-  isPrClosed?: boolean,
-): Promise<void> {
+) {
   const githubToken = core.getInput("github_token");
   const octokit = github.getOctokit(githubToken);
 
@@ -25,10 +16,7 @@ export async function createDeployments(
     throw new Error("Pull request data not found");
   }
 
-  const {
-    number: prNumber,
-    head: { ref },
-  } = payload.pull_request;
+  const { number: prNumber } = payload.pull_request;
 
   for (const previewEnvironment of previewEnvironments) {
     const environmentName = `Preview/PR-${prNumber}/${previewEnvironment.projectName}`;
@@ -40,20 +28,16 @@ export async function createDeployments(
       environment: environmentName,
     };
 
-    const deployment = await octokit.rest.repos.createDeployment({
+    const { data: deployments } = await octokit.rest.repos.listDeployments({
       ...commonParameters,
-      ref,
-      auto_merge: false,
-      required_contexts: [],
     });
 
-    if ("id" in deployment.data) {
-      await octokit.rest.repos.createDeploymentStatus({
-        ...commonParameters,
-        deployment_id: deployment.data.id,
-        environment_url: previewEnvironment.urls[0],
-        state: "success",
-      });
-    }
+    const [latestDeployment] = deployments;
+
+    await octokit.rest.repos.createDeploymentStatus({
+      ...commonParameters,
+      deployment_id: latestDeployment.id,
+      state: "inactive",
+    });
   }
 }

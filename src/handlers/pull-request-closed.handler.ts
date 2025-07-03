@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 
-import { createDeployments } from "../services/github/create-deployments.service";
+import { deactivateDeployments } from "../services/github/deactivate-deployments.service";
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
 
@@ -8,9 +8,9 @@ export async function handlePullRequestClosed() {
   const previewEnvironments = await createPreviewEnvironment();
 
   const isPrClosed = true;
-  await createDeployments(previewEnvironments, isPrClosed);
-
   await updateComment(previewEnvironments, isPrClosed);
+
+  await deactivateDeployments(previewEnvironments);
 
   core.setOutput(
     "preview_environments_urls",
