@@ -1,6 +1,8 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
+import { IPreviewEnvironment } from "../../types/preview-environment";
+
 type CommonParameters = {
   owner: string;
   repo: string;
@@ -9,8 +11,8 @@ type CommonParameters = {
 };
 
 // TODO: Create JobSummary for the deployment
-export async function createDeployment(
-  previewEnvironmentUrl: string,
+export async function createDeployments(
+  previewEnvironments: IPreviewEnvironment[],
   isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
@@ -36,20 +38,22 @@ export async function createDeployment(
     environment: environmentName,
   };
 
-  const deployment = await octokit.rest.repos.createDeployment({
-    ...commonParameters,
-    ref,
-    auto_merge: false,
-    required_contexts: [],
-  });
-
-  if ("id" in deployment.data) {
-    await octokit.rest.repos.createDeploymentStatus({
+  for (const previewEnvironment of previewEnvironments) {
+    const deployment = await octokit.rest.repos.createDeployment({
       ...commonParameters,
-      deployment_id: deployment.data.id,
-      environment_url: previewEnvironmentUrl,
-      state: "success",
+      ref,
+      auto_merge: false,
+      required_contexts: [],
     });
+
+    if ("id" in deployment.data) {
+      await octokit.rest.repos.createDeploymentStatus({
+        ...commonParameters,
+        deployment_id: deployment.data.id,
+        environment_url: previewEnvironment.urls[0],
+        state: "success",
+      });
+    }
   }
 
   if (isPrClosed) {
@@ -69,9 +73,10 @@ async function deactiveAllPreviousDeployments(
     environment,
   };
 
+  // What is a good number for the per_page? Since it could have multiple preview environments per PR
   const { data: deployments } = await octokit.rest.repos.listDeployments({
     ...commonParameters,
-    per_page: 2,
+    per_page: 10,
   });
 
   for (const deployment of deployments) {

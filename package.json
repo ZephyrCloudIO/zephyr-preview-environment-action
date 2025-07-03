@@ -1,11 +1,11 @@
 {
-  "name": "zephyr-preview-environment-action",
+  "name": "zephyr-preview-environments-action",
   "version": "1.0.0",
-  "description": "Create a preview environment using Zephyr (PR-only action)",
+  "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --minify --outfile=index.js",
-    "build:example": "cd zephyr-examples/vite-project && pnpm i && pnpm run build",
+    "build:examples": "cd zephyr-examples/vite-project && pnpm i && pnpm run build && cd ../vite-project-2 && pnpm i && pnpm run build",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],

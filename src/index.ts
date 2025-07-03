@@ -4,6 +4,7 @@ import * as github from "@actions/github";
 import { handlePullRequestClosed } from "./handlers/pull-request-closed.handler";
 import { handlePullRequestOpened } from "./handlers/pull-request-opened.handler";
 import { handlePullRequestUpdated } from "./handlers/pull-request-updated.handler";
+
 import { isPullRequestEvent } from "./services/github/is-pull-request-event.service";
 
 (async () => {

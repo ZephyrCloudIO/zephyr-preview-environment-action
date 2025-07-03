@@ -1,16 +1,23 @@
 import * as core from "@actions/core";
 
-import { createDeployment } from "../services/github/create-deployment.service";
+import { createDeployments } from "../services/github/create-deployments.service";
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
 
 export async function handlePullRequestClosed() {
-  const previewEnvironmentUrl = await createPreviewEnvironment();
+  const previewEnvironments = await createPreviewEnvironment();
 
   const isPrClosed = true;
-  await createDeployment(previewEnvironmentUrl, isPrClosed);
+  await createDeployments(previewEnvironments, isPrClosed);
 
-  await updateComment(previewEnvironmentUrl, isPrClosed);
+  await updateComment(previewEnvironments, isPrClosed);
 
-  core.setOutput("preview_environment_url", previewEnvironmentUrl);
+  core.setOutput(
+    "preview_environments_urls",
+    JSON.stringify(
+      previewEnvironments.map(
+        (previewEnvironment) => previewEnvironment.urls[0],
+      ),
+    ),
+  );
 }

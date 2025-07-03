@@ -1,15 +1,22 @@
 import * as core from "@actions/core";
 
-import { createDeployment } from "../services/github/create-deployment.service";
+import { createDeployments } from "../services/github/create-deployments.service";
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironment } from "../services/zephyr/create-preview-environment.service";
 
 export async function handlePullRequestUpdated() {
-  const previewEnvironmentUrl = await createPreviewEnvironment();
+  const previewEnvironments = await createPreviewEnvironment();
 
-  await createDeployment(previewEnvironmentUrl);
+  await createDeployments(previewEnvironments);
 
-  await updateComment(previewEnvironmentUrl);
+  await updateComment(previewEnvironments);
 
-  core.setOutput("preview_environment_url", previewEnvironmentUrl);
+  core.setOutput(
+    "preview_environments_urls",
+    JSON.stringify(
+      previewEnvironments.map(
+        (previewEnvironment) => previewEnvironment.urls[0],
+      ),
+    ),
+  );
 }

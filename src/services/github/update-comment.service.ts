@@ -1,11 +1,12 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
+import { IPreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function updateComment(
-  previewEnvironmentUrl: string,
+  previewEnvironments: IPreviewEnvironment[],
   isPrClosed?: boolean,
 ): Promise<void> {
   const githubToken = core.getInput("github_token");
@@ -30,7 +31,7 @@ export async function updateComment(
     comment.body?.includes("Preview Environment"),
   );
 
-  const commentBody = getCommentBody(previewEnvironmentUrl, isPrClosed);
+  const commentBody = getCommentBody(previewEnvironments, isPrClosed);
 
   if (comment) {
     await octokit.rest.issues.updateComment({
@@ -45,6 +46,6 @@ export async function updateComment(
 
   // Workaround to create a comment if was not created properly in the pull_request_opened event by any reason
   if (!isPrClosed) {
-    await createComment(previewEnvironmentUrl);
+    await createComment(previewEnvironments);
   }
 }

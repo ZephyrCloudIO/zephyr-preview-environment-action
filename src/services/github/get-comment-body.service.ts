@@ -1,7 +1,9 @@
 import * as github from "@actions/github";
 
+import { IPreviewEnvironment } from "../../types/preview-environment";
+
 export function getCommentBody(
-  previewEnvironmentUrl: string,
+  previewEnvironments: IPreviewEnvironment[],
   isPrClosed?: boolean,
 ): string {
   const { payload } = github.context;
@@ -11,10 +13,9 @@ export function getCommentBody(
 
   if (isPrClosed) {
     return `**Preview Environment Deactivated!**\n\n
-| Name | Status | URL |
+| Project Name | Status | URL |
 |----|----------|--------|
-| Preview | ❌ Deactivated | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
-| Latest Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`
@@ -25,8 +26,7 @@ export function getCommentBody(
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
 |----|----------|--------|
-| 😎 Preview Environment | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
-| 🔥 Version | ✅ Active | [${previewEnvironmentUrl}](${previewEnvironmentUrl}) |
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`

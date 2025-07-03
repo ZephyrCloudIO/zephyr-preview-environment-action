@@ -1,4 +1,4 @@
-# Zephyr Preview Environment Action
+# Zephyr Preview Environments Action
 
 A GitHub Action that automatically creates preview environments for your pull requests using [Zephyr](https://zephyr-cloud.io/). This action integrates seamlessly with your GitHub workflow to provide instant preview environments for code reviews and testing.
 
@@ -19,7 +19,7 @@ We're actively working on these exciting features to enhance your preview enviro
 - **💣 Ephemeral preview environments**: Create and destroy Zephyr preview environments using the Zephyr API
 - **🔐 Short-lived tokens**: Create short-lived tokens using GitHub OIDC
 - **💬 Customizable comments**: Customize the comment that is posted to the pull request
-- **🔄 Retry pattern**: Implement robust retry mechanisms for failed operations (e.g. when the preview environment is not created)
+- **🔄 Retry pattern**: Implement robust retry mechanisms for failed operations (e.g. when the preview environments are not created)
 - **📝 Better Error Messages**: More descriptive error messages and troubleshooting guides
 
 <!-- ### 🛠️ Developer Experience
@@ -50,8 +50,6 @@ Before using this action, you need:
 1. **Zephyr Token**: A Zephyr token defined in the `ZE_SECRET_TOKEN` in your repository secrets and added to your workflow as an environment variable in the build step
 2. **GitHub Token**: A GitHub token with appropriate permissions
 
-<!-- 4. **Application ID**: Your Zephyr application ID (e.g., `vite-project.zephyr-preview-environment-action.leooliveirax`) -->
-
 ## 🔧 Setup
 
 ### 1. Add the Action to Your Workflow
@@ -59,14 +57,14 @@ Before using this action, you need:
 Create or update your `.github/workflows/on_pull_request.yml` file:
 
 ```yaml
-name: Preview Environment
+name: Preview Environments
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
 jobs:
-  create-preview:
+  create-preview-environments:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -91,15 +89,15 @@ jobs:
           ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
         run: pnpm run build
 
-      - name: Deploy preview environment
+      - name: Deploy preview environments
         uses: ZephyrCloudIO/zephyr-preview-environment-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        id: preview
+        id: preview_environments_action
 
       - name: Preview deployment URL
-        if: steps.preview.outputs.preview_environment_url
-        run: echo "Preview available at ${{ steps.preview.outputs.preview_environment_url }}"
+        if: steps.preview_environments_action.outputs.preview_environments_urls
+        run: echo "Preview available at ${{ steps.preview_environments_action.outputs.preview_environments_urls }}"
 ```
 
 ### 2. Configure Permissions
@@ -122,9 +120,9 @@ permissions:
 
 ## 📤 Outputs
 
-| Output                    | Description                                |
-| ------------------------- | ------------------------------------------ |
-| `preview_environment_url` | The URL of the created preview environment |
+| Output                      | Description                                  |
+| --------------------------- | -------------------------------------------- |
+| `preview_environments_urls` | The URLs of the created preview environments |
 
 ## 🔄 How It Works
 
@@ -132,21 +130,21 @@ The action automatically handles different pull request events:
 
 ### When a PR is Opened
 
-1. Creates a new preview environment in Zephyr
+1. Creates new preview environments in Zephyr
 2. Creates a GitHub deployment status
-3. Posts a comment with the preview URL
-4. Outputs the preview URL for use in other steps
+3. Posts a comment with the preview URLs
+4. Outputs the preview URLs for use in other steps
 
 ### When a PR is Updated (synchronize/reopened)
 
-1. Updates the existing preview environment
+1. Updates the existing preview environments
 2. Updates the GitHub deployment status
-3. Updates the comment with the new preview URL
-4. Outputs the preview URL
+3. Updates the comment with the new preview URLs
+4. Outputs the preview URLs
 
 ### When a PR is Closed
 
-1. Handles cleanup of the preview environment
+1. Handles cleanup of the preview environments
 2. Updates the deployment status to indicate closure
 3. Updates the comment to reflect the closed state
 
