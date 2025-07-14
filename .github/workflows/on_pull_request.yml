@@ -1,0 +1,52 @@
+name: Preview Environments
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  deployments: write # allow creating deployments
+  pull-requests: write # allow commenting on PRs
+  contents: read # minimal read access to repo, if needed
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.2
+          run_install: false
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Build examples
+        env:
+          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+          ZE_API: ${{ vars.ZE_API }}
+          ZE_API_GATE: ${{ vars.ZE_API_GATE }}
+        run: pnpm run build:examples
+
+      - name: Deploy preview environments
+        uses: ./
+        id: preview_environments_action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preview deployment URL
+        if: steps.preview_environments_action.outputs.preview_environments_urls
+        run: echo "Preview available at ${{ steps.preview_environments_action.outputs.preview_environments_urls }}"
