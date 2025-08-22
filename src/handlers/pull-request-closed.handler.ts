@@ -13,12 +13,12 @@ export async function handlePullRequestClosed(): Promise<void> {
   // Disabling deployment creation for now to avoid wall of comments
   // await deactivateDeployments(previewEnvironments);
 
-  // core.setOutput(
-  //   "preview_environments_urls",
-  //   JSON.stringify(
-  //     previewEnvironments.map(
-  //       (previewEnvironment) => previewEnvironment.urls[0],
-  //     ),
-  //   ),
-  // );
+  core.setOutput(
+    "preview_environments_urls",
+    JSON.stringify(
+      previewEnvironments.map(
+        (previewEnvironment) => previewEnvironment.urls[0],
+      ),
+    ),
+  );
 }

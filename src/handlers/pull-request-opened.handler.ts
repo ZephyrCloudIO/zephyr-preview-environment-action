@@ -12,12 +12,12 @@ export async function handlePullRequestOpened(): Promise<void> {
 
   await createComment(previewEnvironments);
 
-  // core.setOutput(
-  //   "preview_environments_urls",
-  //   JSON.stringify(
-  //     previewEnvironments.map(
-  //       (previewEnvironment) => previewEnvironment.urls[0],
-  //     ),
-  //   ),
-  // );
+  core.setOutput(
+    "preview_environments_urls",
+    JSON.stringify(
+      previewEnvironments.map(
+        (previewEnvironment) => previewEnvironment.urls[0],
+      ),
+    ),
+  );
 }
