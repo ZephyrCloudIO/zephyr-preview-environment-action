@@ -7,7 +7,8 @@ import { createPreviewEnvironments } from "../services/zephyr/create-preview-env
 export async function handlePullRequestUpdated(): Promise<void> {
   const previewEnvironments = await createPreviewEnvironments();
 
-  await createDeployments(previewEnvironments);
+  // Disabling deployment creation for now to avoid wall of comments
+  // await createDeployments(previewEnvironments);
 
   await updateComment(previewEnvironments);
 
