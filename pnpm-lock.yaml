@@ -18,8 +18,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       zephyr-agent:
-        specifier: 0.0.0-canary-20250626143056
-        version: 0.0.0-canary-20250626143056
+        specifier: ^0.0.57
+        version: 0.0.57
     devDependencies:
       '@types/node':
         specifier: ^24.0.3
@@ -649,11 +649,11 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zephyr-agent@0.0.0-canary-20250626143056:
-    resolution: {integrity: sha512-GncxTiN3dTdwi42R5fiai+C5zwucqiZvb8rTaDTrZ7GpFyhsSZg/u9zVLSNc9GPEqP+2iZqUJhCFviy+rtWDuA==}
+  zephyr-agent@0.0.57:
+    resolution: {integrity: sha512-txqpAjG81y6MTXFCdap1BRqSA9zBm/Fujxa8vKhRNMoOwvU81xIjpVcCXc7jqn0hA8NzdHvZyawES62ZUO5YKg==}
 
-  zephyr-edge-contract@0.0.0-canary-20250626143056:
-    resolution: {integrity: sha512-Jbc+z22hbq05IEsoVYFidYgTyJ4lO+WLUxSedt4/VNXxEJL5L67YcOmbfLrZRsiNgFj0i9MSxj4lE9f2avqDCg==}
+  zephyr-edge-contract@0.0.57:
+    resolution: {integrity: sha512-IId8bqzMcn87JTFobeTxH8XJsUgKv9R81rOH0egOC6llcCWDR4GXIazUblf02fcFujIOmuw9u8inhiVzu832vQ==}
 
 snapshots:
 
@@ -845,7 +845,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios-retry@4.5.0(axios@1.10.0(debug@4.4.1)):
+  axios-retry@4.5.0(axios@1.10.0):
     dependencies:
       axios: 1.10.0(debug@4.4.1)
       is-retry-allowed: 2.2.0
@@ -1221,10 +1221,10 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zephyr-agent@0.0.0-canary-20250626143056:
+  zephyr-agent@0.0.57:
     dependencies:
       axios: 1.10.0(debug@4.4.1)
-      axios-retry: 4.5.0(axios@1.10.0(debug@4.4.1))
+      axios-retry: 4.5.0(axios@1.10.0)
       cloudflare: 3.5.0
       debug: 4.4.1
       git-url-parse: 15.0.0
@@ -1236,13 +1236,13 @@ snapshots:
       socket.io-client: 4.8.1
       tslib: 2.8.1
       uuid: 8.3.2
-      zephyr-edge-contract: 0.0.0-canary-20250626143056
+      zephyr-edge-contract: 0.0.57
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - supports-color
       - utf-8-validate
 
-  zephyr-edge-contract@0.0.0-canary-20250626143056:
+  zephyr-edge-contract@0.0.57:
     dependencies:
       tslib: 2.8.1
