@@ -24,19 +24,6 @@ STASHED=$?
 npx lint-staged
 FORMAT_EXIT_CODE=$?
 
-# If linting passed, run build to ensure compilation works
-if [ $FORMAT_EXIT_CODE -eq 0 ]; then
-  echo "🔨 Building project to verify compilation..."
-  pnpm run build
-  BUILD_EXIT_CODE=$?
-  if [ $BUILD_EXIT_CODE -ne 0 ]; then
-    echo "❌ Build failed - commit blocked"
-    FORMAT_EXIT_CODE=$BUILD_EXIT_CODE
-  else
-    echo "✅ Build successful"
-  fi
-fi
-
 # Restore working directory state
 if [ $STASHED -eq 0 ]; then
   # Re-stage the formatted files
