@@ -1,18 +1,18 @@
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { getInput } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function updateComment(
-  previewEnvironments: IPreviewEnvironment[],
-  isPrClosed?: boolean,
+  previewEnvironments: PreviewEnvironment[],
+  prActionType?: "updated" | "closed"
 ): Promise<void> {
-  const githubToken = core.getInput("github_token");
-  const octokit = github.getOctokit(githubToken);
+  const githubToken = getInput("github_token");
+  const octokit = getOctokit(githubToken);
 
-  const { repo, payload } = github.context;
+  const { repo, payload } = context;
   const { owner, repo: repoName } = repo;
 
   if (!payload.pull_request) {
@@ -27,17 +27,17 @@ export async function updateComment(
     issue_number: prNumber,
   });
 
-  const comment = comments.find((comment) =>
-    comment.body?.includes("Preview Environment"),
+  const commentToUpdate = comments.find((comment) =>
+    comment.body?.includes("Preview Environment")
   );
 
-  const commentBody = getCommentBody(previewEnvironments, isPrClosed);
+  const commentBody = getCommentBody(previewEnvironments, prActionType);
 
-  if (comment) {
+  if (commentToUpdate) {
     await octokit.rest.issues.updateComment({
       owner,
       repo: repoName,
-      comment_id: comment.id,
+      comment_id: commentToUpdate.id,
       body: commentBody,
     });
 
@@ -45,7 +45,7 @@ export async function updateComment(
   }
 
   // Workaround to create a comment if was not created properly in the pull_request_opened or pull_request_updated event by any reason
-  if (!isPrClosed) {
+  if (prActionType !== "closed") {
     await createComment(previewEnvironments);
   }
 }

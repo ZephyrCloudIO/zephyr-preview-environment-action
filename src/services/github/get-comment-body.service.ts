@@ -1,24 +1,26 @@
-import * as github from "@actions/github";
+import { context } from "@actions/github";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 
 export function getCommentBody(
-  previewEnvironments: IPreviewEnvironment[],
-  isPrClosed?: boolean,
+  previewEnvironments: PreviewEnvironment[],
+  prActionType?: "updated" | "closed"
 ): string {
-  const { payload } = github.context;
+  const { payload } = context;
 
-  const branch = payload.pull_request?.head?.ref;
-  const latestCommit = payload.pull_request?.head?.sha?.substring(0, 7);
+  const SHORT_COMMIT_HASH_LENGTH = 7;
+  const latestCommit = payload.pull_request?.head?.sha?.substring(
+    0,
+    SHORT_COMMIT_HASH_LENGTH
+  );
 
-  if (isPrClosed) {
+  if (prActionType === "closed") {
     return `**Preview Environment Deactivated!**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
-- **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
 - **Deactivated:** ${new Date().toLocaleString()}`;
   }
@@ -29,7 +31,6 @@ ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projec
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
-- **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Created:** ${new Date().toLocaleString()}`;
+- **${prActionType === "updated" ? "Updated" : "Created"} at:** ${new Date().toLocaleString()}`;
 }

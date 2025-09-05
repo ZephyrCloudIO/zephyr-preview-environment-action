@@ -1,7 +1,6 @@
-import * as core from "@actions/core";
+import { setOutput } from "@actions/core";
 
 import { createComment } from "../services/github/create-comment.service";
-import { createDeployments } from "../services/github/create-deployments.service";
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
 export async function handlePullRequestOpened(): Promise<void> {
@@ -12,12 +11,12 @@ export async function handlePullRequestOpened(): Promise<void> {
 
   await createComment(previewEnvironments);
 
-  core.setOutput(
+  setOutput(
     "preview_environments_urls",
     JSON.stringify(
       previewEnvironments.map(
-        (previewEnvironment) => previewEnvironment.urls[0],
-      ),
-    ),
+        (previewEnvironment) => previewEnvironment.urls[0]
+      )
+    )
   );
 }

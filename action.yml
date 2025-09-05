@@ -1,12 +1,19 @@
 name: "Zephyr Preview Environments"
 description: "Create preview environments using Zephyr (PR-only action)"
+author: "ZephyrCloudIO"
+branding:
+  icon: "cloud"
+  color: "blue"
+
 inputs:
   github_token:
-    description: "The GitHub token to use for the action"
+    description: "GitHub token for API access"
     required: true
+
 outputs:
   preview_environments_urls:
-    description: "The URLs of the created preview environments"
+    description: "URLs of created preview environments"
+
 runs:
   using: "node20"
   main: "index.js"
