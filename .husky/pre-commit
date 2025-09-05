@@ -20,8 +20,8 @@ PARTIALLY_STAGED=$(git diff --name-only)
 git stash push --quiet --keep-index --message "pre-commit-stash" || true
 STASHED=$?
 
-# Run formatter on the staged files
-pnpm dlx ultracite fix
+# Run lint-staged to format only changed files of specific types
+npx lint-staged
 FORMAT_EXIT_CODE=$?
 
 # Restore working directory state
