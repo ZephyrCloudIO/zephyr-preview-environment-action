@@ -1,6 +1,4 @@
-import * as core from "@actions/core";
-
-import { deactivateDeployments } from "../services/github/deactivate-deployments.service";
+import { setOutput } from '../services/github/set-output.service';
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
@@ -13,12 +11,5 @@ export async function handlePullRequestClosed(): Promise<void> {
   // Disabling deployment creation for now to avoid wall of comments
   // await deactivateDeployments(previewEnvironments);
 
-  core.setOutput(
-    "preview_environments_urls",
-    JSON.stringify(
-      previewEnvironments.map(
-        (previewEnvironment) => previewEnvironment.urls[0],
-      ),
-    ),
-  );
+  setOutput(previewEnvironments);
 }
