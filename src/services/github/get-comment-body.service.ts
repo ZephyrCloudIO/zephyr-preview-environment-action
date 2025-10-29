@@ -2,6 +2,11 @@ import * as github from "@actions/github";
 
 import { IPreviewEnvironment } from "../../types/preview-environment";
 
+function truncateUrl(url: string, maxLength: number = 70): string {
+  if (url.length <= maxLength) return url;
+  return url.substring(0, maxLength - 3) + '... ↗';
+}
+
 export function getCommentBody(
   previewEnvironments: IPreviewEnvironment[],
   isPrClosed?: boolean,
@@ -15,7 +20,7 @@ export function getCommentBody(
     return `**Preview Environment Deactivated!**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`
@@ -26,7 +31,7 @@ ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projec
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${previewEnvironment.urls[0]}](${previewEnvironment.urls[0]}) |`).join("\n")}
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`
