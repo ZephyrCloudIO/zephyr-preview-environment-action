@@ -20,7 +20,7 @@ export function getCommentBody(
     return `**Preview Environment Deactivated!**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | <a href="${previewEnvironment.urls[0]}" target="_blank">${truncateUrl(previewEnvironment.urls[0])}</a> |`).join("\n")}
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`
@@ -31,7 +31,7 @@ ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projec
   return `🚀 **Preview Environment Ready!**\n\n
 | Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | <a href="${previewEnvironment.urls[0]}" target="_blank">${truncateUrl(previewEnvironment.urls[0])}</a> |`).join("\n")}
+${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Branch:** \`${branch}\`
