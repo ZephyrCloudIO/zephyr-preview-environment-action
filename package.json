@@ -8,8 +8,7 @@
     "build:examples": "cd zephyr-examples/vite-project && pnpm i && pnpm run build && cd ../vite-project-2 && pnpm i && pnpm run build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "ZephyrCloudIO",
   "packageManager": "pnpm@10.12.2",
   "dependencies": {
     "@actions/core": "^1.11.1",
@@ -17,24 +16,8 @@
     "zephyr-agent": "^0.0.57"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.2",
     "@types/node": "^24.0.3",
     "esbuild": "^0.25.5",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.6",
-    "prettier": "^3.6.0",
-    "typescript": "^5.8.3",
-    "ultracite": "5.3.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "form-data": ">=4.0.4",
-      "axios": ">=1.12.0"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": [
-      "pnpm dlx ultracite fix"
-    ]
+    "typescript": "^5.8.3"
   }
 }

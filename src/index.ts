@@ -4,7 +4,9 @@ import { context } from "@actions/github";
 import { handlePullRequestClosed } from "./handlers/pull-request-closed.handler";
 import { handlePullRequestOpened } from "./handlers/pull-request-opened.handler";
 import { handlePullRequestUpdated } from "./handlers/pull-request-updated.handler";
+import { validateGitHubToken } from "./services/github/validation/validate-github-token.service";
 import { validatePullRequestEvent } from "./services/github/validation/validate-pull-request-event.service";
+import { validateWorkflowPermissions } from "./services/github/validation/validate-workflow-permissions.service";
 
 (async () => {
   try {
@@ -17,8 +19,8 @@ import { validatePullRequestEvent } from "./services/github/validation/validate-
       return;
     }
 
-    // await validateGitHubToken();
-    // await validateWorkflowPermissions();
+    await validateGitHubToken();
+    await validateWorkflowPermissions();
 
     const eventAction = context.payload.action;
     switch (eventAction) {
