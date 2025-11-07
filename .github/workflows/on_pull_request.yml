@@ -45,7 +45,7 @@ jobs:
         uses: ./
         id: preview_environments_action
         with:
-          github_token: ""
+          github_token: test
 
       - name: Preview deployment URL
         if: steps.preview_environments_action.outputs.preview_environments_urls
