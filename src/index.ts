@@ -39,7 +39,9 @@ import { validateWorkflowPermissions } from "./services/github/validation/valida
     }
   } catch (error) {
     setFailed(
-      `Action failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+      `Action failed: ${
+        error instanceof Error ? error.message : JSON.stringify(error)
+      }`
     );
   }
 })();
