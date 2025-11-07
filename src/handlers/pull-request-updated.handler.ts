@@ -1,5 +1,4 @@
-import { setOutput } from "@actions/core";
-
+import { setOutput } from "../services/github/set-output.service";
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
@@ -12,12 +11,5 @@ export async function handlePullRequestUpdated(): Promise<void> {
   const prActionType = "updated";
   await updateComment(previewEnvironments, prActionType);
 
-  setOutput(
-    "preview_environments_urls",
-    JSON.stringify(
-      previewEnvironments.map(
-        (previewEnvironment) => previewEnvironment.urls[0]
-      )
-    )
-  );
+  setOutput(previewEnvironments);
 }
