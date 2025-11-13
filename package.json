@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --minify --outfile=index.js",
-    "build:examples": "cd zephyr-examples/vite-project && pnpm i && pnpm run build && cd ../vite-project-2 && pnpm i && pnpm run build"
+    "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build"
   },
   "keywords": [],
   "author": "ZephyrCloudIO",
+  "license": "Apache-2.0",
   "packageManager": "pnpm@10.12.2",
   "dependencies": {
     "@actions/core": "^1.11.1",

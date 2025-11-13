@@ -8,10 +8,9 @@ Automatically create and manage preview environments for your pull requests usin
 ## ✨ What it does
 
 - 🚀 **Creates preview environments** when PRs are opened
-- 🔄 **Updates environments** when PRs are updated  
+- 🔄 **Updates environments** when PRs are updated
 - 🧹 **Cleans up resources** when PRs are closed
 - 💬 **Posts preview URLs** as PR comments
-- 📊 **Creates deployment statuses** for GitHub integration
 
 ## 🚀 Quick Start
 
@@ -35,7 +34,6 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  deployments: write
 
 jobs:
   preview:
@@ -102,6 +100,10 @@ GitHub token lacks required scopes
 - 📖 [Zephyr Documentation](https://docs.zephyr-cloud.io/)
 - 💬 [Open an issue](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/issues)
 - 🌟 [Examples repository](https://github.com/ZephyrCloudIO/zephyr-examples)
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ---
 
