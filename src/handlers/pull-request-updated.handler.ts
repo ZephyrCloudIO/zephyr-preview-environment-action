@@ -1,6 +1,6 @@
-import { setOutput } from '../services/github/set-output.service';
-import { updateComment } from '../services/github/update-comment.service';
-import { createPreviewEnvironments } from '../services/zephyr/create-preview-environments.service';
+import { setOutput } from "../services/github/set-output.service";
+import { updateComment } from "../services/github/update-comment.service";
+import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
 export async function handlePullRequestUpdated(): Promise<void> {
   const previewEnvironments = await createPreviewEnvironments();
@@ -11,5 +11,5 @@ export async function handlePullRequestUpdated(): Promise<void> {
   const prActionType = "updated";
   await updateComment(previewEnvironments, prActionType);
 
-  setOutput(previewEnvironments)
+  setOutput(previewEnvironments);
 }

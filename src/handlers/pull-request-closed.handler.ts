@@ -1,4 +1,4 @@
-import { setOutput } from '../services/github/set-output.service';
+import { setOutput } from "../services/github/set-output.service";
 import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
