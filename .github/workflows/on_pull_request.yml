@@ -37,6 +37,8 @@ jobs:
       - name: Build examples
         env:
           ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+          ZE_API: ${{ vars.ZE_API }}
+          ZE_API_GATE: ${{ vars.ZE_API_GATE }}
         run: pnpm run build:examples
 
       - name: Deploy preview environments
