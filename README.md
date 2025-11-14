@@ -1,7 +1,7 @@
 # Zephyr Preview Environments
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Zephyr%20Preview%20Environments-blue.svg)](https://github.com/marketplace/actions/zephyr-preview-environments)
-[![CI](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/workflows/CI/badge.svg)](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/actions)
+[![CI](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/actions/workflows/on_pull_request.yml/badge.svg)](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/actions)
 
 Automatically create and manage preview environments for your pull requests using [Zephyr Cloud](https://zephyr-cloud.io/). Get instant preview deployments with every PR to streamline your code review process.
 
@@ -25,7 +25,7 @@ Automatically create and manage preview environments for your pull requests usin
 Create `.github/workflows/preview-environments.yml`:
 
 ```yaml
-name: Preview Environments
+name: Zephyr Preview Environments
 
 on:
   pull_request:
@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
 
       # Your build steps here
-      - name: Build your application
+      - name: Build Your Application
         env:
           # Option 1: Personal Token
           ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
@@ -54,8 +54,8 @@ jobs:
           # Add your build commands
           npm ci && npm run build
 
-      - name: Create preview environment
-        uses: ZephyrCloudIO/zephyr-preview-environment-action@v1
+      - name: Zephyr Preview Environments
+        uses: ZephyrCloudIO/zephyr-preview-environment-action@v0.1.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
