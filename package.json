@@ -1,6 +1,6 @@
 {
   "name": "zephyr-preview-environments-action",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
