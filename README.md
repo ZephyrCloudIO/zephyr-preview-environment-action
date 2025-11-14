@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       # Your build steps here
       - name: Build your application
         env:
@@ -53,7 +53,7 @@ jobs:
         run: |
           # Add your build commands
           npm ci && npm run build
-      
+
       - name: Create preview environment
         uses: ZephyrCloudIO/zephyr-preview-environment-action@v1
         with:
@@ -73,6 +73,7 @@ Zephyr supports two authentication approaches for CI/CD. Choose the one that bes
 Authenticates as an individual user. Best for personal projects or when you need user-specific permissions.
 
 **Setup:**
+
 1. Generate your token from **Profile Settings** in [Zephyr Cloud](https://zephyr-cloud.io/)
 2. Add `ZE_SECRET_TOKEN` to your repository secrets
 3. Use it in your workflow:
@@ -82,6 +83,7 @@ Authenticates as an individual user. Best for personal projects or when you need
    ```
 
 **When to use:**
+
 - Individual developer authentication
 - Personal projects
 - User-specific permission requirements
@@ -93,6 +95,7 @@ Authenticates as an individual user. Best for personal projects or when you need
 Authenticates at the organization level without individual user credentials. Best for team projects and shared pipelines.
 
 **Setup:**
+
 1. Generate your token from **Organization Settings** in [Zephyr Cloud](https://zephyr-cloud.io/)
 2. Add `ZE_SERVER_TOKEN` to your repository secrets
 3. Use it in your workflow:
@@ -107,6 +110,7 @@ Authenticates at the organization level without individual user credentials. Bes
 **Note:** The `ZE_USER_EMAIL` is automatically extracted from the GitHub commit author email, so you typically don't need to set it manually.
 
 **When to use:**
+
 - Organization-level authentication
 - Multiple team members sharing pipelines
 - Centralized credential management
@@ -120,14 +124,14 @@ Authenticates at the organization level without individual user credentials. Bes
 
 ### Inputs
 
-| Input | Description | Required |
-|-------|-------------|----------|
-| `github_token` | GitHub token for API access | ✅ Yes |
+| Input          | Description                 | Required |
+| -------------- | --------------------------- | -------- |
+| `github_token` | GitHub token for API access | ✅ Yes   |
 
 ### Outputs
 
-| Output | Description |
-|--------|-------------|
+| Output                      | Description                            |
+| --------------------------- | -------------------------------------- |
 | `preview_environments_urls` | JSON array of preview environment URLs |
 
 ## 🛠️ Troubleshooting
@@ -135,21 +139,27 @@ Authenticates at the organization level without individual user credentials. Bes
 ### Common Issues
 
 **❌ Permission denied errors**
+
 ```
 Missing required workflow permissions
 ```
+
 → Add the required permissions to your workflow (see Quick Start example)
 
 **❌ No deployed apps found**
+
 ```
 No deployed apps found. Make sure you have built it and deployed it to Zephyr Cloud
 ```
+
 → Ensure your application is built and deployed to Zephyr before running the action
 
 **❌ Invalid GitHub token**
+
 ```
 GitHub token lacks required scopes
 ```
+
 → Use `${{ secrets.GITHUB_TOKEN }}` or ensure your PAT has `repo` scope
 
 ### Getting Help
