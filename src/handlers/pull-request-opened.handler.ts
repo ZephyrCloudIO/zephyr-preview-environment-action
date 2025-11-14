@@ -1,5 +1,5 @@
-import { setOutput } from '../services/github/set-output.service';
 import { createComment } from "../services/github/create-comment.service";
+import { setOutput } from '../services/github/set-output.service';
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
 export async function handlePullRequestOpened(): Promise<void> {

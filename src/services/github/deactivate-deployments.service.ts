@@ -1,15 +1,16 @@
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { getInput } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 
+// TODO: Figure out a better way to deactivate the deployments properly
 export async function deactivateDeployments(
-  previewEnvironments: IPreviewEnvironment[],
+  previewEnvironments: PreviewEnvironment[]
 ): Promise<void> {
-  const githubToken = core.getInput("github_token");
-  const octokit = github.getOctokit(githubToken);
+  const githubToken = getInput("github_token");
+  const octokit = getOctokit(githubToken);
 
-  const { repo, payload } = github.context;
+  const { repo, payload } = context;
   const { owner, repo: repoName } = repo;
 
   if (!payload.pull_request) {
@@ -19,7 +20,7 @@ export async function deactivateDeployments(
   const { number: prNumber } = payload.pull_request;
 
   for (const previewEnvironment of previewEnvironments) {
-    const environmentName = `Preview/PR-${prNumber}/${previewEnvironment.projectName}`;
+    const environmentName = `PR-${prNumber}/${previewEnvironment.projectName}`;
 
     const commonParameters = {
       owner,

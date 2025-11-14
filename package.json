@@ -1,16 +1,15 @@
 {
   "name": "zephyr-preview-environments-action",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node22 --minify --outfile=index.js",
-    "build:examples": "cd zephyr-examples/vite-project && pnpm i && pnpm run build && cd ../vite-project-2 && pnpm i && pnpm run build",
-    "format": "prettier --write \"src/**/*.ts\""
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --minify --outfile=index.js",
+    "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "ZephyrCloudIO",
+  "license": "Apache-2.0",
   "packageManager": "pnpm@10.12.2",
   "dependencies": {
     "@actions/core": "^1.11.1",
@@ -20,7 +19,6 @@
   "devDependencies": {
     "@types/node": "^24.0.3",
     "esbuild": "^0.25.5",
-    "prettier": "^3.6.0",
     "typescript": "^5.8.3"
   },
   "pnpm": {

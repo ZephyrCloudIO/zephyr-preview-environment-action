@@ -1,29 +1,36 @@
-import * as github from "@actions/github";
+import { context } from "@actions/github";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 
-function truncateUrl(url: string, maxLength: number = 70): string {
-  if (url.length <= maxLength) return url;
-  return url.substring(0, maxLength - 3) + '... ↗';
+function truncateUrl(url: string, maxLength = 70): string {
+  const ELLIPSIS = "... ↗";
+  const ELLIPSIS_LENGTH = ELLIPSIS.length;
+
+  if (url.length <= maxLength) {
+    return url;
+  }
+  return `${url.substring(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
 }
 
 export function getCommentBody(
-  previewEnvironments: IPreviewEnvironment[],
-  isPrClosed?: boolean,
+  previewEnvironments: PreviewEnvironment[],
+  prActionType?: "updated" | "closed"
 ): string {
-  const { payload } = github.context;
+  const { payload } = context;
 
-  const branch = payload.pull_request?.head?.ref;
-  const latestCommit = payload.pull_request?.head?.sha?.substring(0, 7);
+  const SHORT_COMMIT_HASH_LENGTH = 7;
+  const latestCommit = payload.pull_request?.head?.sha?.substring(
+    0,
+    SHORT_COMMIT_HASH_LENGTH
+  );
 
-  if (isPrClosed) {
+  if (prActionType === "closed") {
     return `**Preview Environment Deactivated!**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
-- **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
 - **Deactivated:** ${new Date().toLocaleString()}`;
   }
@@ -34,7 +41,6 @@ ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projec
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
 
 **Details:**
-- **Branch:** \`${branch}\`
 - **Latest Commit:** \`${latestCommit}\`
-- **Created:** ${new Date().toLocaleString()}`;
+- **${prActionType === "updated" ? "Updated" : "Created"} at:** ${new Date().toLocaleString()}`;
 }

@@ -1,22 +1,20 @@
 import { getAllAppDeployResults, getAllDeployedApps } from "zephyr-agent";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 
-// TODO: Implement Retry Pattern
-// TODO: Handle cache
 export async function createPreviewEnvironments(): Promise<
-  IPreviewEnvironment[]
+  PreviewEnvironment[]
 > {
   const allDeployedApps = await getAllDeployedApps();
   const allAppDeployResults = await getAllAppDeployResults();
 
   if (!allDeployedApps.length) {
     throw new Error(
-      "No deployed apps found. Make sure you have built it and deployed it to Zephyr",
+      "No deployed apps found. Make sure you have built it and deployed it to Zephyr Cloud (check our documentation: https://docs.zephyr-cloud.io/general/get-started)"
     );
   }
 
-  const previewEnvironments: IPreviewEnvironment[] = allDeployedApps.map(
+  const previewEnvironments: PreviewEnvironment[] = allDeployedApps.map(
     (deployedApp) => {
       const projectName = deployedApp.split(".")[0];
       const urls = allAppDeployResults[deployedApp].urls;
@@ -25,7 +23,7 @@ export async function createPreviewEnvironments(): Promise<
         projectName,
         urls,
       };
-    },
+    }
   );
 
   return previewEnvironments;

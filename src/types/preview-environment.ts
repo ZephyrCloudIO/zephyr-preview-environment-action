@@ -1,4 +1,4 @@
-export interface IPreviewEnvironment {
+export type PreviewEnvironment = {
   projectName: string;
   urls: string[];
-}
+};

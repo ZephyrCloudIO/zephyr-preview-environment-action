@@ -8,7 +8,8 @@ export async function handlePullRequestUpdated(): Promise<void> {
   // Disabling deployment creation for now to avoid wall of comments
   // await createDeployments(previewEnvironments);
 
-  await updateComment(previewEnvironments);
+  const prActionType = "updated";
+  await updateComment(previewEnvironments, prActionType);
 
   setOutput(previewEnvironments)
 }

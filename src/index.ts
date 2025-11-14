@@ -1,24 +1,23 @@
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { setFailed, warning } from "@actions/core";
+import { context } from "@actions/github";
 
 import { handlePullRequestClosed } from "./handlers/pull-request-closed.handler";
 import { handlePullRequestOpened } from "./handlers/pull-request-opened.handler";
 import { handlePullRequestUpdated } from "./handlers/pull-request-updated.handler";
-
-import { isPullRequestEvent } from "./services/github/is-pull-request-event.service";
+import { validatePullRequestEvent } from "./services/github/validation/validate-pull-request-event.service";
 
 (async () => {
   try {
-    if (!isPullRequestEvent()) {
-      core.warning(
+    if (!validatePullRequestEvent()) {
+      warning(
         "This action can only be triggered on pull requests and pull request data must be available. Current event: " +
-          github.context.eventName,
+          context.eventName
       );
 
       return;
     }
 
-    const eventAction = github.context.payload.action;
+    const eventAction = context.payload.action;
     switch (eventAction) {
       case "opened":
         await handlePullRequestOpened();
@@ -30,10 +29,14 @@ import { isPullRequestEvent } from "./services/github/is-pull-request-event.serv
       case "closed":
         await handlePullRequestClosed();
         break;
+      default:
+        throw new Error(`Unsupported event action: ${eventAction}`);
     }
   } catch (error) {
-    core.setFailed(
-      `Action failed: ${error instanceof Error ? error.message : JSON.stringify(error)}`,
+    setFailed(
+      `Action failed: ${
+        error instanceof Error ? error.message : JSON.stringify(error)
+      }`
     );
   }
 })();

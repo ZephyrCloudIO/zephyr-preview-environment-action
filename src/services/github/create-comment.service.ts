@@ -1,16 +1,16 @@
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { getInput } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 
-import { IPreviewEnvironment } from "../../types/preview-environment";
+import type { PreviewEnvironment } from "../../types/preview-environment";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function createComment(
-  previewEnvironments: IPreviewEnvironment[],
+  previewEnvironments: PreviewEnvironment[]
 ): Promise<void> {
-  const githubToken = core.getInput("github_token");
-  const octokit = github.getOctokit(githubToken);
+  const githubToken = getInput("github_token");
+  const octokit = getOctokit(githubToken);
 
-  const { repo, payload } = github.context;
+  const { repo, payload } = context;
   const { owner, repo: repoName } = repo;
 
   if (!payload.pull_request) {
