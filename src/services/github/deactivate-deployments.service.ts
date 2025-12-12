@@ -1,12 +1,12 @@
 import { getInput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 
-import type { PreviewEnvironment } from "../../types/preview-environment";
+import { getPRDeployments } from "./get-pr-deployments.service";
 
-// TODO: Figure out a better way to deactivate the deployments properly
-export async function deactivateDeployments(
-  previewEnvironments: PreviewEnvironment[]
-): Promise<void> {
+/**
+ * Deactivates all deployments for the current PR by setting their status to 'inactive'
+ */
+export async function deactivateDeployments(): Promise<void> {
   const githubToken = getInput("github_token");
   const octokit = getOctokit(githubToken);
 
@@ -19,26 +19,24 @@ export async function deactivateDeployments(
 
   const { number: prNumber } = payload.pull_request;
 
-  for (const previewEnvironment of previewEnvironments) {
-    const environmentName = `PR-${prNumber}/${previewEnvironment.projectName}`;
+  // Fetch all deployments for this PR
+  const prDeployments = await getPRDeployments(prNumber);
 
-    const commonParameters = {
-      owner,
-      repo: repoName,
-      description: `Preview environment for PR #${prNumber} / ${previewEnvironment.projectName}`,
-      environment: environmentName,
-    };
+  // Deactivate all deployments that are currently active
+  for (const deployment of prDeployments) {
+    // Check if the deployment has any active status
+    const hasActiveStatus = deployment.statuses.some(
+      (status) => status.state === "success" || status.state === "pending"
+    );
 
-    const { data: deployments } = await octokit.rest.repos.listDeployments({
-      ...commonParameters,
-    });
-
-    const [latestDeployment] = deployments;
-
-    await octokit.rest.repos.createDeploymentStatus({
-      ...commonParameters,
-      deployment_id: latestDeployment.id,
-      state: "inactive",
-    });
+    if (hasActiveStatus) {
+      await octokit.rest.repos.createDeploymentStatus({
+        owner,
+        repo: repoName,
+        deployment_id: deployment.id,
+        state: "inactive",
+        description: `PR #${prNumber} closed`,
+      });
+    }
   }
 }

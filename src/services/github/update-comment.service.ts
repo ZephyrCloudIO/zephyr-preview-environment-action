@@ -1,12 +1,16 @@
 import { getInput } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 
-import type { PreviewEnvironment } from "../../types/preview-environment";
-import { createComment } from "./create-comment.service";
-import { getCommentBody } from "./get-comment-body.service";
+import { getCommentBodyFromDeployments } from "./get-comment-body-from-deployments.service";
+import { getPRDeployments } from "./get-pr-deployments.service";
+import { groupDeploymentsByCommit } from "./group-deployments-by-commit.service";
 
+/**
+ * Updates the PR comment with deployment information.
+ * Uses deployments as the source of truth to reconstruct the comment,
+ * ensuring eventual consistency even with concurrent jobs.
+ */
 export async function updateComment(
-  previewEnvironments: PreviewEnvironment[],
   prActionType?: "updated" | "closed"
 ): Promise<void> {
   const githubToken = getInput("github_token");
@@ -19,8 +23,27 @@ export async function updateComment(
     throw new Error("Pull request data not found");
   }
 
-  const { number: prNumber } = payload.pull_request;
+  const {
+    number: prNumber,
+    head: { sha: currentCommitSha },
+  } = payload.pull_request;
 
+  // Fetch all deployments for this PR from GitHub API (source of truth)
+  const prDeployments = await getPRDeployments(prNumber);
+
+  // Group deployments by commit SHA
+  const groupedDeployments = groupDeploymentsByCommit(
+    prDeployments,
+    currentCommitSha
+  );
+
+  // Generate comment body from deployments
+  const commentBody = getCommentBodyFromDeployments(
+    groupedDeployments,
+    prActionType
+  );
+
+  // Find existing comment
   const { data: comments } = await octokit.rest.issues.listComments({
     owner,
     repo: repoName,
@@ -31,8 +54,6 @@ export async function updateComment(
     comment.body?.includes("Preview Environment")
   );
 
-  const commentBody = getCommentBody(previewEnvironments, prActionType);
-
   if (commentToUpdate) {
     await octokit.rest.issues.updateComment({
       owner,
@@ -40,12 +61,13 @@ export async function updateComment(
       comment_id: commentToUpdate.id,
       body: commentBody,
     });
-
-    return;
-  }
-
-  // Workaround to create a comment if was not created properly in the pull_request_opened or pull_request_updated event by any reason
-  if (prActionType !== "closed") {
-    await createComment(previewEnvironments);
+  } else {
+    // Create new comment if none exists
+    await octokit.rest.issues.createComment({
+      owner,
+      repo: repoName,
+      issue_number: prNumber,
+      body: commentBody,
+    });
   }
 }

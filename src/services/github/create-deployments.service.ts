@@ -19,16 +19,20 @@ export async function createDeployments(
 
   const {
     number: prNumber,
-    head: { ref },
+    head: { ref, sha },
   } = payload.pull_request;
 
+  // Use workflow run ID for uniqueness across parallel jobs
+  const workflowRunId = context.runId;
+
   for (const previewEnvironment of previewEnvironments) {
-    const environmentName = `PR-${prNumber}/${previewEnvironment.projectName}`;
+    const { projectName } = previewEnvironment;
+    const environmentName = `PR-${prNumber}/${projectName}-${workflowRunId}`;
 
     const commonParameters = {
       owner,
       repo: repoName,
-      description: `Preview environment for PR #${prNumber} / ${previewEnvironment.projectName}`,
+      description: `Preview environment for PR #${prNumber} / ${projectName} / ${workflowRunId}`,
       environment: environmentName,
     };
 
@@ -37,6 +41,11 @@ export async function createDeployments(
       ref,
       auto_merge: false,
       required_contexts: [],
+      payload: {
+        commitSha: sha,
+        projectName,
+        workflowRunId,
+      },
     });
 
     if ("id" in deployment.data) {
