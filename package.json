@@ -24,7 +24,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "typescript": "^5.8.3",
-    "ultracite": "6.4.2"
+    "ultracite": "7.0.11"
   },
   "pnpm": {
     "overrides": {
