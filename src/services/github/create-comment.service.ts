@@ -3,6 +3,7 @@ import { context, getOctokit } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { getCommentBody } from "./get-comment-body.service";
+import { getJobName } from "./get-job-name.service";
 
 export async function createComment(
   previewEnvironments: PreviewEnvironment[]
@@ -19,7 +20,8 @@ export async function createComment(
 
   const { number: prNumber } = payload.pull_request;
 
-  const commentBody = getCommentBody(previewEnvironments);
+  const jobName = getJobName();
+  const commentBody = getCommentBody(previewEnvironments, undefined, jobName);
 
   await octokit.rest.issues.createComment({
     owner,

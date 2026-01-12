@@ -18,11 +18,49 @@ jobs:
     name: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.26.0
+          version: 10.12.2
+          run_install: false
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build Examples
+        env:
+          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+          ZE_API: ${{ vars.ZE_API }}
+          ZE_API_GATE: ${{ vars.ZE_API_GATE }}
+        run: pnpm run build:examples
+
+      - name: Zephyr Preview Environments
+        uses: ./
+        id: zephyr-preview-environment-action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preview deployment URL
+        if: steps.zephyr-preview-environment-action.outputs.preview_environments_urls
+        run: echo "Preview available at ${{ steps.zephyr-preview-environment-action.outputs.preview_environments_urls }}"
+
+  build-2:
+    runs-on: ubuntu-latest
+    name: Build 2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.2
           run_install: false
 
       - name: Use Node.js ${{ env.NODE_VERSION }}

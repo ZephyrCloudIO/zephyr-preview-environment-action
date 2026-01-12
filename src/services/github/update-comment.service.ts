@@ -4,6 +4,7 @@ import { context, getOctokit } from "@actions/github";
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
 import { getCommentBody } from "./get-comment-body.service";
+import { getJobName } from "./get-job-name.service";
 
 export async function updateComment(
   previewEnvironments: PreviewEnvironment[],
@@ -27,11 +28,31 @@ export async function updateComment(
     issue_number: prNumber,
   });
 
-  const commentToUpdate = comments.find((comment) =>
-    comment.body?.includes("Preview Environment")
-  );
+  const jobName = getJobName();
+  const jobMarker = `<!-- zephyr-job-id: ${jobName} -->`;
 
-  const commentBody = getCommentBody(previewEnvironments, prActionType);
+  const commentToUpdate = comments.find((comment) => {
+    // Primary: search for exact job marker
+    if (comment.body?.includes(jobMarker)) {
+      return true;
+    }
+
+    // Secondary: backwards compatibility for "default" job
+    if (
+      jobName === "default" &&
+      comment.body?.includes("Preview Environment")
+    ) {
+      return true;
+    }
+
+    return false;
+  });
+
+  const commentBody = getCommentBody(
+    previewEnvironments,
+    prActionType,
+    jobName
+  );
 
   if (commentToUpdate) {
     await octokit.rest.issues.updateComment({

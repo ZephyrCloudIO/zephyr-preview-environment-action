@@ -14,7 +14,8 @@ function truncateUrl(url: string, maxLength = 70): string {
 
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[],
-  prActionType?: "updated" | "closed"
+  prActionType?: "updated" | "closed",
+  jobName = "default"
 ): string {
   const { payload } = context;
 
@@ -25,7 +26,8 @@ export function getCommentBody(
   );
 
   if (prActionType === "closed") {
-    return `**Preview Environment Deactivated!**\n\n
+    return `<!-- zephyr-job-id: ${jobName} -->
+**Preview Environment Deactivated! (${jobName})**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
@@ -35,7 +37,8 @@ ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projec
 - **Deactivated:** ${new Date().toLocaleString()}`;
   }
 
-  return `🚀 **Preview Environment Ready!**\n\n
+  return `<!-- zephyr-job-id: ${jobName} -->
+🚀 **Preview Environment Ready! (${jobName})**\n\n
 | Name | Status | URL |
 |----|----------|--------|
 ${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
