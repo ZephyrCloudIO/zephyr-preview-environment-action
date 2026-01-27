@@ -41,8 +41,8 @@ importers:
         specifier: ^5.8.3
         version: 5.9.3
       ultracite:
-        specifier: 6.4.2
-        version: 6.4.2(typescript@5.9.3)
+        specifier: 7.1.1
+        version: 7.1.1
 
 packages:
 
@@ -339,11 +339,6 @@ packages:
   '@toon-format/toon@0.8.0':
     resolution: {integrity: sha512-w8o61UiKRDyTDFh05V9k87jCpa6DBmdBSHm9B1vXS3ynSfhvCKF7wn9IaMfglrfs6ARiaqIcCgBIdYbJETwVxQ==}
 
-  '@trpc/server@11.8.0':
-    resolution: {integrity: sha512-DphyQnLuyX2nwJCQGWQ9zYz4hZGvRhSBqDhQ0SH3tDhQ3PU4u68xofA0pJ741Ir4InEAFD+TtJVLAQy+wVOkiQ==}
-    peerDependencies:
-      typescript: '>=5.7.2'
-
   '@types/node-fetch@2.6.12':
     resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
 
@@ -410,8 +405,8 @@ packages:
     resolution: {integrity: sha512-cYY9mypksY8NRqgDB1XD1RiJL338v/551niynFTGkZOO2LHuB2OmOYxDIe/ttN9AHwrqdum1360G3ald0W9kCg==}
     engines: {node: '>=8'}
 
-  citty@0.1.6:
-    resolution: {integrity: sha512-tskPPKEs8D2KPafUypv2gxwJP8h/OaJmC82QQGGDQcHvXX43xF2VDACcJVmZ0EuSxkpO9Kc4MlrA3q0+FG58AQ==}
+  citty@0.2.0:
+    resolution: {integrity: sha512-8csy5IBFI2ex2hTVpaHN2j+LNE199AgiI7y4dMintrr8i0lQiFn+0AWMZrWdHKIgMOer65f8IThysYhoReqjWA==}
 
   cli-cursor@5.0.0:
     resolution: {integrity: sha512-aCj4O5wKyszjMmDT4tZj93kxyydN/K5zPWSCe6/0AV/AA1pqe5ZBIw0a2ZfPQV7lL5/yb5HsUreJ6UFAF1tEQw==}
@@ -434,13 +429,6 @@ packages:
   commander@14.0.2:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
-
-  confbox@0.2.2:
-    resolution: {integrity: sha512-1NB+BKqhtNipMsov4xI/NnhCKp9XG9NamYp5PVm9klAT0fsrNPjaFICsCFhNhwZJKNh7zB/3q8qXz0E9oaMNtQ==}
-
-  consola@3.4.2:
-    resolution: {integrity: sha512-5IKcdX0nnYavi6G7TtOhwkYzyjfJlatbjMjuLSfE2kYT5pMDOilZ4OvMhi637CcDICTmz3wARPoyhqyX1Y+XvA==}
-    engines: {node: ^14.18.0 || >=16.10.0}
 
   debug@4.4.1:
     resolution: {integrity: sha512-KcKCqiftBJcZr++7ykoDIEwSa3XWowTfNPo92BYxjXiyYEVrUQh2aLyhxBCwww+heortUFxEJYcRzosstTEBYQ==}
@@ -520,9 +508,6 @@ packages:
   eventsource@4.1.0:
     resolution: {integrity: sha512-2GuF51iuHX6A9xdTccMTsNb7VO0lHZihApxhvQzJB5A03DvHDd2FQepodbMaztPBmBcE/ox7o2gqaxGhYB9LhQ==}
     engines: {node: '>=20.0.0'}
-
-  exsolve@1.0.8:
-    resolution: {integrity: sha512-LmDxfWXwcTArk8fUEnOfSZpHOJ6zOMUJKOtFLFqJLoKJetuQG874Uc7/Kki7zFLzYybmZhp1M7+98pfMqeX8yA==}
 
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
@@ -709,9 +694,9 @@ packages:
     resolution: {integrity: sha512-8sPAz/7tw1mCCc8xBG4f0wi+flHkSSgQeX998iQ75Pu27evA6UUWCjSE7xnrYTg2q33oU5leJ061EKPDv6BocQ==}
     engines: {node: '>=10.12.0'}
 
-  nypm@0.6.2:
-    resolution: {integrity: sha512-7eM+hpOtrKrBDCh7Ypu2lJ9Z7PNZBdi/8AT3AX8xoCj43BBVHD0hPSTEvMtkMpfs8FCqBGhxB+uToIQimA111g==}
-    engines: {node: ^14.16.0 || >=16.10.0}
+  nypm@0.6.4:
+    resolution: {integrity: sha512-1TvCKjZyyklN+JJj2TS3P4uSQEInrM/HkkuSXsEzm1ApPgBffOn8gFguNnZf07r/1X6vlryfIqMUkJKQMzlZiw==}
+    engines: {node: '>=18'}
     hasBin: true
 
   object-inspect@1.13.4:
@@ -757,9 +742,6 @@ packages:
     resolution: {integrity: sha512-eG2dWTVw5bzqGRztnHExczNxt5VGsE6OwTeCG3fdUf9KBsZzO3R5OIIIzWR+iZA0NtZ+RDVdaoE2dK1cn6jH4g==}
     engines: {node: '>=0.10'}
     hasBin: true
-
-  pkg-types@2.3.0:
-    resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
   proper-lockfile@4.1.2:
     resolution: {integrity: sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==}
@@ -846,31 +828,6 @@ packages:
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
 
-  trpc-cli@0.12.1:
-    resolution: {integrity: sha512-/D/mIQf3tUrS7ZKJZ1gmSPJn2psAABJfkC5Eevm55SZ4s6KwANOUNlwhAGXN9HT4VSJVfoF2jettevE9vHPQlg==}
-    engines: {node: '>=18'}
-    hasBin: true
-    peerDependencies:
-      '@orpc/server': ^1.0.0
-      '@trpc/server': ^10.45.2 || ^11.0.1
-      '@valibot/to-json-schema': ^1.1.0
-      effect: ^3.14.2 || ^4.0.0
-      valibot: ^1.1.0
-      zod: ^3.24.0 || ^4.0.0
-    peerDependenciesMeta:
-      '@orpc/server':
-        optional: true
-      '@trpc/server':
-        optional: true
-      '@valibot/to-json-schema':
-        optional: true
-      effect:
-        optional: true
-      valibot:
-        optional: true
-      zod:
-        optional: true
-
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -883,9 +840,14 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  ultracite@6.4.2:
-    resolution: {integrity: sha512-Xa6DoPQ9ay7j1H9lNH0SAeiJAgMSEv8zQPlEO+lK8xerQLtVhkTJj6rPkdnVuGSZff7FuPmdyoP8wr2cUfQW9A==}
+  ultracite@7.1.1:
+    resolution: {integrity: sha512-9qScPB2/8XobaC5Xf99Z9ZP1oFWNihzT1tteKkPGkKyWevSXaWVRS9oFGUxXW/pxrmHEwIU9b03NJgrHZn6P+Q==}
     hasBin: true
+    peerDependencies:
+      oxlint: ^1.0.0
+    peerDependenciesMeta:
+      oxlint:
+        optional: true
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
@@ -951,9 +913,6 @@ packages:
 
   zephyr-edge-contract@0.1.2:
     resolution: {integrity: sha512-nERy80QrPn8DGA/kiUQZSLq4f7UdZ1elps/UEvF06QZ83n3YRWiFmP8aQaCu+/f4oWCS1NG9/CkFW28Yxp8tEw==}
-
-  zod@4.1.13:
-    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
 snapshots:
 
@@ -1175,10 +1134,6 @@ snapshots:
 
   '@toon-format/toon@0.8.0': {}
 
-  '@trpc/server@11.8.0(typescript@5.9.3)':
-    dependencies:
-      typescript: 5.9.3
-
   '@types/node-fetch@2.6.12':
     dependencies:
       '@types/node': 24.10.4
@@ -1212,7 +1167,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios-retry@4.5.0(axios@1.13.1):
+  axios-retry@4.5.0(axios@1.13.1(debug@4.4.1)):
     dependencies:
       axios: 1.13.1(debug@4.4.1)
       is-retry-allowed: 2.2.0
@@ -1247,9 +1202,7 @@ snapshots:
 
   ci-info@4.2.0: {}
 
-  citty@0.1.6:
-    dependencies:
-      consola: 3.4.2
+  citty@0.2.0: {}
 
   cli-cursor@5.0.0:
     dependencies:
@@ -1282,10 +1235,6 @@ snapshots:
       delayed-stream: 1.0.0
 
   commander@14.0.2: {}
-
-  confbox@0.2.2: {}
-
-  consola@3.4.2: {}
 
   debug@4.4.1:
     dependencies:
@@ -1369,8 +1318,6 @@ snapshots:
   eventsource@4.1.0:
     dependencies:
       eventsource-parser: 3.0.6
-
-  exsolve@1.0.8: {}
 
   fill-range@7.1.1:
     dependencies:
@@ -1546,12 +1493,10 @@ snapshots:
     dependencies:
       p-limit: 3.1.0
 
-  nypm@0.6.2:
+  nypm@0.6.4:
     dependencies:
-      citty: 0.1.6
-      consola: 3.4.2
+      citty: 0.2.0
       pathe: 2.0.3
-      pkg-types: 2.3.0
       tinyexec: 1.0.2
 
   object-inspect@1.13.4: {}
@@ -1595,12 +1540,6 @@ snapshots:
   picomatch@2.3.1: {}
 
   pidtree@0.6.0: {}
-
-  pkg-types@2.3.0:
-    dependencies:
-      confbox: 0.2.2
-      exsolve: 1.0.8
-      pathe: 2.0.3
 
   proper-lockfile@4.1.2:
     dependencies:
@@ -1691,36 +1630,20 @@ snapshots:
 
   tr46@0.0.3: {}
 
-  trpc-cli@0.12.1(@trpc/server@11.8.0(typescript@5.9.3))(zod@4.1.13):
-    dependencies:
-      commander: 14.0.2
-    optionalDependencies:
-      '@trpc/server': 11.8.0(typescript@5.9.3)
-      zod: 4.1.13
-
   tslib@2.8.1: {}
 
   tunnel@0.0.6: {}
 
   typescript@5.9.3: {}
 
-  ultracite@6.4.2(typescript@5.9.3):
+  ultracite@7.1.1:
     dependencies:
       '@clack/prompts': 0.11.0
-      '@trpc/server': 11.8.0(typescript@5.9.3)
+      commander: 14.0.2
       deepmerge: 4.3.1
       glob: 13.0.0
       jsonc-parser: 3.3.1
-      nypm: 0.6.2
-      picocolors: 1.1.1
-      trpc-cli: 0.12.1(@trpc/server@11.8.0(typescript@5.9.3))(zod@4.1.13)
-      zod: 4.1.13
-    transitivePeerDependencies:
-      - '@orpc/server'
-      - '@valibot/to-json-schema'
-      - effect
-      - typescript
-      - valibot
+      nypm: 0.6.4
 
   undici-types@5.26.5: {}
 
@@ -1763,7 +1686,7 @@ snapshots:
     dependencies:
       '@toon-format/toon': 0.8.0
       axios: 1.13.1(debug@4.4.1)
-      axios-retry: 4.5.0(axios@1.13.1)
+      axios-retry: 4.5.0(axios@1.13.1(debug@4.4.1))
       cloudflare: 3.5.0
       debug: 4.4.1
       eventsource: 4.1.0
@@ -1786,5 +1709,3 @@ snapshots:
   zephyr-edge-contract@0.1.2:
     dependencies:
       tslib: 2.8.1
-
-  zod@4.1.13: {}
