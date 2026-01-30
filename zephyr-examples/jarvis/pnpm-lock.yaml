@@ -21,6 +21,9 @@ importers:
       vite-plugin-zephyr:
         specifier: ^0.1.0
         version: 0.1.2
+      zephyr-agent:
+        specifier: ^0.1.10
+        version: 0.1.10(https-proxy-agent@7.0.6)
     devDependencies:
       '@eslint/js':
         specifier: ^9.29.0
@@ -492,6 +495,9 @@ packages:
   '@toon-format/toon@0.8.0':
     resolution: {integrity: sha512-w8o61UiKRDyTDFh05V9k87jCpa6DBmdBSHm9B1vXS3ynSfhvCKF7wn9IaMfglrfs6ARiaqIcCgBIdYbJETwVxQ==}
 
+  '@toon-format/toon@0.9.0':
+    resolution: {integrity: sha512-BaMhGh1+/z8ceDrF2xL9Drd42hijbUJlivm/1goPR26RgCYsqlMkHbg48hx9a5UjZC7oZqxWPJ6ju5qvALi6Ag==}
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -596,6 +602,10 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  agent-base@7.1.4:
+    resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
+    engines: {node: '>= 14'}
 
   agentkeepalive@4.6.0:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
@@ -925,6 +935,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  https-proxy-agent@7.0.6:
+    resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
+    engines: {node: '>= 14'}
 
   humanize-ms@1.2.1:
     resolution: {integrity: sha512-Fl70vYtsAFb/C06PTS9dZBo7ihau+Tu/DNCk/OyHhea07S+aeMWpFFkUaXRa8fI+ScZbEI8dfSxwY7gxZ9SAVQ==}
@@ -1345,8 +1359,16 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zephyr-agent@0.1.10:
+    resolution: {integrity: sha512-wL9RDvemIEs3jh0LI0nloI0dbefFTDMuFDM+HEV1A1k6pLJ/xZ6gLmGp+by8idnCxH4+snDR5ITSbyetQa5vOQ==}
+    peerDependencies:
+      https-proxy-agent: ^7.0.6
+
   zephyr-agent@0.1.2:
     resolution: {integrity: sha512-+M78aN7AwKawqahrXeEINMIQnuyG1206IsZiMbV8nBSh17mPSyfj39M6q/3tnniT794WPCvK2HPDusc4hpwSFg==}
+
+  zephyr-edge-contract@0.1.10:
+    resolution: {integrity: sha512-bAqXtBWljq4p13ko+oqo0FiLxK8Cqf382lxUHOEWaU3zn/ErQ20o40QVm+hXVwDFvovupI4vMQLmuGPUYF45NA==}
 
   zephyr-edge-contract@0.1.2:
     resolution: {integrity: sha512-nERy80QrPn8DGA/kiUQZSLq4f7UdZ1elps/UEvF06QZ83n3YRWiFmP8aQaCu+/f4oWCS1NG9/CkFW28Yxp8tEw==}
@@ -1661,6 +1683,8 @@ snapshots:
 
   '@toon-format/toon@0.8.0': {}
 
+  '@toon-format/toon@0.9.0': {}
+
   '@types/estree@1.0.8': {}
 
   '@types/json-schema@7.0.15': {}
@@ -1797,6 +1821,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
+  agent-base@7.1.4: {}
+
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
@@ -1816,7 +1842,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios-retry@4.5.0(axios@1.13.2(debug@4.4.1)):
+  axios-retry@4.5.0(axios@1.13.2):
     dependencies:
       axios: 1.13.2(debug@4.4.1)
       is-retry-allowed: 2.2.0
@@ -1824,6 +1850,14 @@ snapshots:
   axios@1.13.2(debug@4.4.1):
     dependencies:
       follow-redirects: 1.15.9(debug@4.4.1)
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.13.2(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.15.9(debug@4.4.3)
       form-data: 4.0.4
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -2087,6 +2121,10 @@ snapshots:
     optionalDependencies:
       debug: 4.4.1
 
+  follow-redirects@1.15.9(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
+
   form-data-encoder@1.7.2: {}
 
   form-data@4.0.4:
@@ -2157,6 +2195,13 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  https-proxy-agent@7.0.6:
+    dependencies:
+      agent-base: 7.1.4
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
 
   humanize-ms@1.2.1:
     dependencies:
@@ -2527,11 +2572,30 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
+  zephyr-agent@0.1.10(https-proxy-agent@7.0.6):
+    dependencies:
+      '@toon-format/toon': 0.9.0
+      axios: 1.13.2(debug@4.4.3)
+      axios-retry: 4.5.0(axios@1.13.2)
+      debug: 4.4.3
+      eventsource: 4.1.0
+      git-url-parse: 15.0.0
+      https-proxy-agent: 7.0.6
+      is-ci: 4.1.0
+      jose: 5.10.0
+      node-persist: 4.0.4
+      open: 10.1.2
+      proper-lockfile: 4.1.2
+      tslib: 2.8.1
+      zephyr-edge-contract: 0.1.10
+    transitivePeerDependencies:
+      - supports-color
+
   zephyr-agent@0.1.2:
     dependencies:
       '@toon-format/toon': 0.8.0
       axios: 1.13.2(debug@4.4.1)
-      axios-retry: 4.5.0(axios@1.13.2(debug@4.4.1))
+      axios-retry: 4.5.0(axios@1.13.2)
       cloudflare: 3.5.0
       debug: 4.4.1
       eventsource: 4.1.0
@@ -2550,6 +2614,10 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
+
+  zephyr-edge-contract@0.1.10:
+    dependencies:
+      tslib: 2.8.1
 
   zephyr-edge-contract@0.1.2:
     dependencies:
