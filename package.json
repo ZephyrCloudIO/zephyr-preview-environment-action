@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "ZephyrCloudIO",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.26.0",
+  "packageManager": "pnpm@10.28.2",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
