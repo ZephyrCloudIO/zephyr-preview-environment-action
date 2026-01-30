@@ -1,4 +1,4 @@
-export type PreviewEnvironment = {
+export interface PreviewEnvironment {
   projectName: string;
   urls: string[];
-};
+}
