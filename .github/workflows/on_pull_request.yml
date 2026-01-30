@@ -37,9 +37,7 @@ jobs:
       - name: Build Examples
         env:
           ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
-          ZE_API: ${{ vars.ZE_API }}
-          ZE_API_GATE: ${{ vars.ZE_API_GATE }}
-        run: DEBUG=zephyr:* pnpm run build:examples
+        run: pnpm run build:examples
 
       - name: Zephyr Preview Environments
         uses: ./
