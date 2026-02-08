@@ -1,6 +1,10 @@
 import { getAllAppDeployResults, getAllDeployedApps } from "zephyr-agent";
 
-import type { PreviewEnvironment } from "../../types/preview-environment";
+import type {
+  ApprovalInfo,
+  DeploymentStatus,
+  PreviewEnvironment,
+} from "../../types/preview-environment";
 
 export async function createPreviewEnvironments(): Promise<
   PreviewEnvironment[]
@@ -17,12 +21,32 @@ export async function createPreviewEnvironments(): Promise<
   const previewEnvironments: PreviewEnvironment[] = allDeployedApps.map(
     (deployedApp) => {
       const projectName = deployedApp.split(".")[0];
-      const urls = allAppDeployResults[deployedApp].urls;
+      const result = allAppDeployResults[deployedApp];
+      const urls = result.urls;
 
-      return {
+      const env: PreviewEnvironment = {
         projectName,
         urls,
       };
+
+      // Read deployment status from deploy result if available
+      const deployResult = result as Record<string, unknown>;
+      if (deployResult.status) {
+        env.status = deployResult.status as DeploymentStatus;
+      }
+      if (deployResult.approval && typeof deployResult.approval === "object") {
+        const approval = deployResult.approval as Record<string, unknown>;
+        env.approval = {
+          id: String(approval.id ?? ""),
+          status: String(
+            approval.status ?? "PENDING"
+          ) as ApprovalInfo["status"],
+          requiredApprovals: Number(approval.requiredApprovals ?? 0),
+          currentApprovals: Number(approval.currentApprovals ?? 0),
+        };
+      }
+
+      return env;
     }
   );
 
