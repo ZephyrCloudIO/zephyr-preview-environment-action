@@ -1,10 +1,11 @@
-import { setFailed, warning } from "@actions/core";
+import { warning } from "@actions/core";
 import { context } from "@actions/github";
 
 import { handlePullRequestClosed } from "./handlers/pull-request-closed.handler";
 import { handlePullRequestOpened } from "./handlers/pull-request-opened.handler";
 import { handlePullRequestUpdated } from "./handlers/pull-request-updated.handler";
 import { validatePullRequestEvent } from "./services/github/validation/validate-pull-request-event.service";
+import { NO_DEPLOYED_APPS_MESSAGE } from "./services/zephyr/create-preview-environments.service";
 
 (async () => {
   try {
@@ -33,10 +34,17 @@ import { validatePullRequestEvent } from "./services/github/validation/validate-
         throw new Error(`Unsupported event action: ${eventAction}`);
     }
   } catch (error) {
-    setFailed(
-      `Action failed: ${
-        error instanceof Error ? error.message : JSON.stringify(error)
-      }`
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : JSON.stringify(error);
+
+    if (errorMessage === NO_DEPLOYED_APPS_MESSAGE) {
+      warning(`Preview deployment skipped: ${errorMessage}`);
+
+      return;
+    }
+
+    warning(`Action error (non-blocking): ${errorMessage}`);
+
+    return;
   }
 })();
