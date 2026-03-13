@@ -23,15 +23,12 @@ import { NO_DEPLOYED_APPS_MESSAGE } from "./services/zephyr/create-preview-envir
       case "opened":
         await handlePullRequestOpened();
         break;
-      case "synchronize":
-      case "reopened":
-        await handlePullRequestUpdated();
-        break;
       case "closed":
         await handlePullRequestClosed();
         break;
       default:
-        throw new Error(`Unsupported event action: ${eventAction}`);
+        await handlePullRequestUpdated();
+        break;
     }
   } catch (error) {
     const errorMessage =
