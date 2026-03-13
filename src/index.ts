@@ -28,7 +28,6 @@ import { NO_DEPLOYED_APPS_MESSAGE } from "./services/zephyr/create-preview-envir
         break;
       default:
         await handlePullRequestUpdated();
-        break;
     }
   } catch (error) {
     const errorMessage =
