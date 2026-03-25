@@ -12,6 +12,20 @@ function truncateUrl(url: string, maxLength = 70): string {
   return `${url.substring(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
 }
 
+function getStatusCell(env: PreviewEnvironment): string {
+  if (env.status === "pending_approval") {
+    const approval = env.approval;
+    const progress = approval
+      ? `${approval.currentApprovals}/${approval.requiredApprovals}`
+      : "";
+    return `⏳ Pending Approval ${progress}`;
+  }
+  if (env.status === "rejected") {
+    return "❌ Rejected";
+  }
+  return "✅ Active";
+}
+
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[],
   prActionType?: "updated" | "closed"
@@ -28,17 +42,31 @@ export function getCommentBody(
     return `**Preview Environment Deactivated!**\n\n
 | Project Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ❌ Deactivated | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
+${previewEnvironments.map((env) => `| ${env.projectName} | ❌ Deactivated | [${truncateUrl(env.urls[0])}](${env.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Latest Commit:** \`${latestCommit}\`
 - **Deactivated:** ${new Date().toLocaleString()}`;
   }
 
-  return `🚀 **Preview Environment Ready!**\n\n
+  const hasPendingApprovals = previewEnvironments.some(
+    (env) => env.status === "pending_approval"
+  );
+  const hasRejected = previewEnvironments.some(
+    (env) => env.status === "rejected"
+  );
+
+  let title = "🚀 **Preview Environment Ready!**";
+  if (hasPendingApprovals) {
+    title = "⏳ **Preview Environment — Awaiting Approval**";
+  } else if (hasRejected) {
+    title = "❌ **Preview Environment — Deployment Rejected**";
+  }
+
+  return `${title}\n\n
 | Name | Status | URL |
 |----|----------|--------|
-${previewEnvironments.map((previewEnvironment) => `| ${previewEnvironment.projectName} | ✅ Active | [${truncateUrl(previewEnvironment.urls[0])}](${previewEnvironment.urls[0]}) |`).join("\n")}
+${previewEnvironments.map((env) => `| ${env.projectName} | ${getStatusCell(env)} | [${truncateUrl(env.urls[0])}](${env.urls[0]}) |`).join("\n")}
 
 **Details:**
 - **Latest Commit:** \`${latestCommit}\`

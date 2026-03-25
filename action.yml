@@ -13,6 +13,10 @@ inputs:
 outputs:
   preview_environments_urls:
     description: "URLs of created preview environments"
+  deployment_status:
+    description: "Deployment status for each environment (deployed, pending_approval, rejected)"
+  pending_approvals:
+    description: "JSON array of environments pending approval, if any"
 
 runs:
   using: "node20"
