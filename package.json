@@ -11,27 +11,27 @@
   "keywords": [],
   "author": "ZephyrCloudIO",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.26.0",
+  "packageManager": "pnpm@10.33.0",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.1",
     "zephyr-agent": "^0.1.10"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.13",
+    "@biomejs/biome": "2.4.9",
     "@types/node": "^24.0.3",
     "esbuild": "^0.27.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "typescript": "^5.8.3",
-    "ultracite": "7.1.1"
+    "ultracite": "7.3.2"
   },
   "pnpm": {
     "overrides": {
       "qs": ">=6.14.1",
       "form-data": ">=4.0.4",
-      "axios": "1.13.5",
-      "undici": "6.24.0",
+      "axios": "1.13.6",
+      "undici": "6.24.1",
       "@isaacs/brace-expansion": ">=5.0.1"
     }
   },
