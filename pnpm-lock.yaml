@@ -29,19 +29,19 @@ importers:
         specifier: 2.3.13
         version: 2.3.13
       '@types/node':
-        specifier: ^24.0.3
+        specifier: 24.10.4
         version: 24.10.4
       esbuild:
-        specifier: ^0.27.0
+        specifier: 0.27.2
         version: 0.27.2
       husky:
-        specifier: ^9.1.7
+        specifier: 9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: ^16.2.6
+        specifier: 16.2.7
         version: 16.2.7
       typescript:
-        specifier: ^5.8.3
+        specifier: 5.9.3
         version: 5.9.3
       ultracite:
         specifier: 7.1.1
@@ -1048,7 +1048,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios-retry@4.5.0(axios@1.13.5(debug@4.4.1)):
+  axios-retry@4.5.0(axios@1.13.5):
     dependencies:
       axios: 1.13.5(debug@4.4.1)
       is-retry-allowed: 2.2.0
@@ -1490,7 +1490,7 @@ snapshots:
     dependencies:
       '@toon-format/toon': 0.9.0
       axios: 1.13.5(debug@4.4.1)
-      axios-retry: 4.5.0(axios@1.13.5(debug@4.4.1))
+      axios-retry: 4.5.0(axios@1.13.5)
       debug: 4.4.1
       eventsource: 4.1.0
       git-url-parse: 15.0.0
