@@ -9,7 +9,7 @@ function truncateUrl(url: string, maxLength = 70): string {
   if (url.length <= maxLength) {
     return url;
   }
-  return `${url.substring(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
+  return `${url.slice(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
 }
 
 export function getCommentBody(
@@ -19,7 +19,7 @@ export function getCommentBody(
   const { payload } = context;
 
   const SHORT_COMMIT_HASH_LENGTH = 7;
-  const latestCommit = payload.pull_request?.head?.sha?.substring(
+  const latestCommit = payload.pull_request?.head?.sha?.slice(
     0,
     SHORT_COMMIT_HASH_LENGTH
   );
