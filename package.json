@@ -34,7 +34,8 @@
       "undici": "6.24.0",
       "@isaacs/brace-expansion": ">=5.0.1",
       "@eslint/plugin-kit": "^0.5.0",
-      "koa": "3.1.2"
+      "koa": "3.1.2",
+      "picomatch": "^4.0.4"
     }
   },
   "lint-staged": {
