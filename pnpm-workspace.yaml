@@ -9,3 +9,6 @@ blockExoticSubdeps: true
 
 packages:
   - zephyr-examples/*
+minimumReleaseAgeExclude:
+  # Renovate security update: axios@1.15.0
+  - axios@1.15.0
