@@ -54,10 +54,10 @@ importers:
     dependencies:
       react:
         specifier: ^19.1.0
-        version: 19.2.4
+        version: 19.2.5
       react-dom:
         specifier: ^19.1.0
-        version: 19.2.4(react@19.2.4)
+        version: 19.2.5(react@19.2.5)
       vite-plugin-zephyr:
         specifier: ^0.1.10
         version: 0.1.16(https-proxy-agent@7.0.6)(rollup@4.60.1)(typescript@5.9.3)(vite@8.0.7(@types/node@24.10.4)(esbuild@0.27.2)(yaml@2.8.2))
@@ -66,10 +66,10 @@ importers:
         specifier: ^9.29.0
         version: 9.39.4
       '@types/react':
-        specifier: ^19.1.8
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.1.6
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react-swc':
         specifier: ^3.10.2
@@ -100,10 +100,10 @@ importers:
     dependencies:
       react:
         specifier: ^19.1.0
-        version: 19.2.4
+        version: 19.2.5
       react-dom:
         specifier: ^19.1.0
-        version: 19.2.4(react@19.2.4)
+        version: 19.2.5(react@19.2.5)
       vite-plugin-zephyr:
         specifier: ^0.1.10
         version: 0.1.16(https-proxy-agent@7.0.6)(rollup@4.60.1)(typescript@5.9.3)(vite@8.0.7(@types/node@24.10.4)(esbuild@0.27.2)(yaml@2.8.2))
@@ -112,10 +112,10 @@ importers:
         specifier: ^9.29.0
         version: 9.39.4
       '@types/react':
-        specifier: ^19.1.8
+        specifier: 19.2.14
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.1.6
+        specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react-swc':
         specifier: ^3.10.2
@@ -1800,13 +1800,13 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  react-dom@19.2.4:
-    resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
+  react-dom@19.2.5:
+    resolution: {integrity: sha512-J5bAZz+DXMMwW/wV3xzKke59Af6CHY7G4uYLN1OvBcKEsWOs4pQExj86BBKamxl/Ik5bx9whOrvBlSDfWzgSag==}
     peerDependencies:
-      react: ^19.2.4
+      react: ^19.2.5
 
-  react@19.2.4:
-    resolution: {integrity: sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==}
+  react@19.2.5:
+    resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
     engines: {node: '>=0.10.0'}
 
   resolve-dir@1.0.1:
@@ -3552,12 +3552,12 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  react-dom@19.2.4(react@19.2.4):
+  react-dom@19.2.5(react@19.2.5):
     dependencies:
-      react: 19.2.4
+      react: 19.2.5
       scheduler: 0.27.0
 
-  react@19.2.4: {}
+  react@19.2.5: {}
 
   resolve-dir@1.0.1:
     dependencies:
