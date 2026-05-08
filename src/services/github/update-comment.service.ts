@@ -3,7 +3,11 @@ import { context, getOctokit } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
-import { getCommentBody } from "./get-comment-body.service";
+import {
+  getCommentBody,
+  mergePreviewEnvironments,
+  PREVIEW_COMMENT_MARKER,
+} from "./get-comment-body.service";
 
 export async function updateComment(
   previewEnvironments: PreviewEnvironment[],
@@ -27,11 +31,18 @@ export async function updateComment(
     issue_number: prNumber,
   });
 
-  const commentToUpdate = comments.find((comment) =>
-    comment.body?.includes("Preview Environment")
+  const commentToUpdate = comments.find(
+    (comment) =>
+      comment.body?.includes(PREVIEW_COMMENT_MARKER) ||
+      comment.body?.includes("Preview Environment")
   );
 
-  const commentBody = getCommentBody(previewEnvironments, prActionType);
+  const mergedPreviewEnvironments = mergePreviewEnvironments(
+    commentToUpdate?.body,
+    previewEnvironments
+  );
+
+  const commentBody = getCommentBody(mergedPreviewEnvironments, prActionType);
 
   if (commentToUpdate) {
     await octokit.rest.issues.updateComment({

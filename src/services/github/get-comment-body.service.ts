@@ -4,6 +4,9 @@ import type { PreviewEnvironment } from "../../types/preview-environment";
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
+export const PREVIEW_COMMENT_MARKER = "<!-- zephyr-preview-environments -->";
+const TABLE_ROW_PATTERN =
+  /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
 
 function truncateUrl(url: string, maxLength = 70): string {
   const ELLIPSIS = "... ↗";
@@ -52,6 +55,50 @@ ${table}
   return table;
 }
 
+function getPreviewEnvironmentsFromCommentBody(
+  commentBody: string | undefined
+): PreviewEnvironment[] {
+  if (!commentBody) {
+    return [];
+  }
+
+  const previewEnvironments: PreviewEnvironment[] = [];
+
+  let match = TABLE_ROW_PATTERN.exec(commentBody);
+
+  while (match) {
+    const projectName = match[1]?.trim();
+    const url = match[2]?.trim();
+
+    if (projectName && url && projectName !== "Name") {
+      previewEnvironments.push({ projectName, urls: [url] });
+    }
+
+    match = TABLE_ROW_PATTERN.exec(commentBody);
+  }
+
+  return previewEnvironments;
+}
+
+export function mergePreviewEnvironments(
+  existingCommentBody: string | undefined,
+  previewEnvironments: PreviewEnvironment[]
+): PreviewEnvironment[] {
+  const mergedEnvironments = new Map<string, PreviewEnvironment>();
+
+  for (const previewEnvironment of getPreviewEnvironmentsFromCommentBody(
+    existingCommentBody
+  )) {
+    mergedEnvironments.set(previewEnvironment.projectName, previewEnvironment);
+  }
+
+  for (const previewEnvironment of previewEnvironments) {
+    mergedEnvironments.set(previewEnvironment.projectName, previewEnvironment);
+  }
+
+  return Array.from(mergedEnvironments.values());
+}
+
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[],
   prActionType?: "updated" | "closed"
@@ -64,6 +111,7 @@ export function getCommentBody(
 
   if (prActionType === "closed") {
     return [
+      PREVIEW_COMMENT_MARKER,
       "**Preview Environment Deactivated!**",
       "",
       buildEnvironmentsTable(previewEnvironments, false),
@@ -77,6 +125,7 @@ export function getCommentBody(
   const actionLabel = prActionType === "updated" ? "Updated" : "Created";
 
   return [
+    PREVIEW_COMMENT_MARKER,
     "🚀 **Preview Environment Ready!**",
     "",
     buildEnvironmentsTable(previewEnvironments, true),
