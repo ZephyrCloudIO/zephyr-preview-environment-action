@@ -1,5 +1,5 @@
-import { createComment } from "../services/github/create-comment.service";
 import { setOutput } from "../services/github/set-output.service";
+import { updateComment } from "../services/github/update-comment.service";
 import { createPreviewEnvironments } from "../services/zephyr/create-preview-environments.service";
 
 export async function handlePullRequestOpened(): Promise<void> {
@@ -8,7 +8,7 @@ export async function handlePullRequestOpened(): Promise<void> {
   // Disabling deployment creation for now to avoid wall of comments
   // await createDeployments(previewEnvironments);
 
-  await createComment(previewEnvironments);
+  await updateComment(previewEnvironments);
 
   setOutput(previewEnvironments);
 }

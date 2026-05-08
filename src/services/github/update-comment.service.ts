@@ -3,7 +3,11 @@ import { context, getOctokit } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
-import { getCommentBody } from "./get-comment-body.service";
+import {
+  getCommentBody,
+  mergePreviewEnvironments,
+  PREVIEW_COMMENT_MARKER,
+} from "./get-comment-body.service";
 
 export async function updateComment(
   previewEnvironments: PreviewEnvironment[],
@@ -27,11 +31,26 @@ export async function updateComment(
     issue_number: prNumber,
   });
 
-  const commentToUpdate = comments.find((comment) =>
-    comment.body?.includes("Preview Environment")
+  const getCommentTimestamp = (comment: (typeof comments)[number]) =>
+    new Date(comment.updated_at ?? comment.created_at).getTime();
+  const findNewestMatchingComment = (marker: string) =>
+    comments
+      .filter((comment) => comment.body?.includes(marker))
+      .sort(
+        (leftComment, rightComment) =>
+          getCommentTimestamp(rightComment) - getCommentTimestamp(leftComment)
+      )[0];
+
+  const commentToUpdate =
+    findNewestMatchingComment(PREVIEW_COMMENT_MARKER) ??
+    findNewestMatchingComment("Preview Environment");
+
+  const mergedPreviewEnvironments = mergePreviewEnvironments(
+    commentToUpdate?.body,
+    previewEnvironments
   );
 
-  const commentBody = getCommentBody(previewEnvironments, prActionType);
+  const commentBody = getCommentBody(mergedPreviewEnvironments, prActionType);
 
   if (commentToUpdate) {
     await octokit.rest.issues.updateComment({
