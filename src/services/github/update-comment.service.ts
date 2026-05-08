@@ -31,11 +31,19 @@ export async function updateComment(
     issue_number: prNumber,
   });
 
-  const commentToUpdate = comments.find(
-    (comment) =>
-      comment.body?.includes(PREVIEW_COMMENT_MARKER) ||
-      comment.body?.includes("Preview Environment")
-  );
+  const getCommentTimestamp = (comment: (typeof comments)[number]) =>
+    new Date(comment.updated_at ?? comment.created_at).getTime();
+  const findNewestMatchingComment = (marker: string) =>
+    comments
+      .filter((comment) => comment.body?.includes(marker))
+      .sort(
+        (leftComment, rightComment) =>
+          getCommentTimestamp(rightComment) - getCommentTimestamp(leftComment)
+      )[0];
+
+  const commentToUpdate =
+    findNewestMatchingComment(PREVIEW_COMMENT_MARKER) ??
+    findNewestMatchingComment("Preview Environment");
 
   const mergedPreviewEnvironments = mergePreviewEnvironments(
     commentToUpdate?.body,
