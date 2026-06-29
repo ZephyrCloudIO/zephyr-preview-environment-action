@@ -12,3 +12,5 @@ packages:
 minimumReleaseAgeExclude:
   # Renovate security update: axios@1.15.0 || 1.16.0
   - axios@1.15.0 || 1.16.0
+  # Renovate security update: vite@8.0.16
+  - vite@8.0.16
