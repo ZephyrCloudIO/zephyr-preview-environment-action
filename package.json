@@ -4,7 +4,7 @@
   "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --minify --outfile=index.js",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --minify --outfile=index.js",
     "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build",
     "prepare": "husky"
   },
