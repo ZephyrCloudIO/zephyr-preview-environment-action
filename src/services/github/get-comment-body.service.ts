@@ -10,8 +10,6 @@ import {
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
-const ZEPHYR_LOGO_URL =
-  "https://avatars.githubusercontent.com/u/144168943?s=96&v=4";
 const ZEPHYR_WEBSITE_URL = "https://zephyr-cloud.io/";
 const TABLE_ROW_PATTERN =
   /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
@@ -171,8 +169,6 @@ export function getCommentBody(
   return [
     PREVIEW_COMMENT_MARKER,
     PREVIEW_COMMENT_ACTIVE_MARKER,
-    `<a href="${ZEPHYR_WEBSITE_URL}"><img src="${ZEPHYR_LOGO_URL}" alt="Zephyr Cloud logo" width="48"></a>`,
-    "",
     "### Preview deployment ready",
     "A fresh **Zephyr Cloud** preview is ready to review.",
     "",

@@ -76,6 +76,33 @@ The build step authenticates to Zephyr with an organization CI token. The previe
 
 GitHub Actions automatically provides the build actor metadata used during CI token exchange. Existing server-token pipelines should follow the [CI token migration guide](https://docs.zephyr-cloud.io/migrations/ci-token-migration).
 
+### Comment author branding
+
+GitHub controls a comment's author name and avatar from the token used to create it. The default `${{ secrets.GITHUB_TOKEN }}` always posts as `github-actions[bot]`; its avatar cannot be customized.
+
+To post as a Zephyr-branded bot:
+
+1. Create a GitHub App with the Zephyr name and logo.
+2. Give it **Pull requests: Read and write** repository permission and install it on the target repositories.
+3. Store its client ID as `ZEPHYR_APP_CLIENT_ID` and private key as `ZEPHYR_APP_PRIVATE_KEY`.
+4. Generate an installation token and pass it to this action:
+
+   ```yaml
+   - name: Create Zephyr GitHub App token
+     id: zephyr-app-token
+     uses: actions/create-github-app-token@v3
+     with:
+       client-id: ${{ vars.ZEPHYR_APP_CLIENT_ID }}
+       private-key: ${{ secrets.ZEPHYR_APP_PRIVATE_KEY }}
+
+   - name: Zephyr Preview Environments
+     uses: ZephyrCloudIO/zephyr-preview-environment-action@v0.2.0
+     with:
+       github_token: ${{ steps.zephyr-app-token.outputs.token }}
+   ```
+
+Comments will then use the GitHub App's `<app-slug>[bot]` identity and profile image.
+
 ## 📋 Configuration
 
 ### Inputs
