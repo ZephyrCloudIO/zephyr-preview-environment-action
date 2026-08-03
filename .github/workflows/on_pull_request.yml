@@ -38,11 +38,18 @@ jobs:
           ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         run: pnpm run build:examples
 
+      - name: Create Zephyr GitHub App token
+        id: zephyr-app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        with:
+          client-id: ${{ vars.ZEPHYR_APP_CLIENT_ID }}
+          private-key: ${{ secrets.ZEPHYR_APP_PRIVATE_KEY }}
+
       - name: Zephyr Preview Environments
         uses: ./
         id: zephyr-preview-environment-action
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.zephyr-app-token.outputs.token }}
 
       - name: Preview deployment URL
         if: steps.zephyr-preview-environment-action.outputs.preview_environments_urls
