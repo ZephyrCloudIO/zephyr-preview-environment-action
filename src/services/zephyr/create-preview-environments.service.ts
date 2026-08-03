@@ -22,7 +22,6 @@ export async function createPreviewEnvironments(): Promise<
       const { snapshot, urls } = deployResult;
 
       return {
-        commitSha: snapshot.git.commit,
         dashboardUrl: getDashboardVersionUrl(snapshot),
         deployedAt: snapshot.createdAt,
         projectName: snapshot.uid.app_name,

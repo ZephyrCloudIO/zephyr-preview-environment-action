@@ -22,12 +22,11 @@ function formatUtcTimestamp(timestamp: number): string {
   }).format(new Date(timestamp));
 }
 
-function getCommitDetails(previewEnvironment: PreviewEnvironment): {
+function getCommitDetails(): {
   label: string;
   url?: string;
 } {
-  const commitSha =
-    previewEnvironment.commitSha ?? context.payload.pull_request?.head?.sha;
+  const commitSha = context.payload.pull_request?.head?.sha;
   const label = commitSha?.slice(0, SHORT_COMMIT_HASH_LENGTH) ?? "N/A";
   const url = commitSha
     ? `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${context.repo.owner}/${context.repo.repo}/commit/${commitSha}`
@@ -41,7 +40,7 @@ function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
   const status = previewEnvironment.dashboardUrl
     ? `✅ Deployment successful!<br>[View deployment](${previewEnvironment.dashboardUrl})`
     : "✅ Deployment successful!";
-  const commit = getCommitDetails(previewEnvironment);
+  const commit = getCommitDetails();
   const commitLabel = `\`${commit.label}\``;
   const commitLink = commit.url
     ? `[${commitLabel}](${commit.url})`
