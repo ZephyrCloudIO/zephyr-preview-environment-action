@@ -3,9 +3,7 @@ import { context } from "@actions/github";
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import {
   PREVIEW_COMMENT_ACTIVE_MARKER,
-  PREVIEW_COMMENT_CLOSED_MARKER,
   PREVIEW_COMMENT_MARKER,
-  PREVIEW_COMMENT_SUPERSEDED_MARKER,
 } from "./preview-comment";
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
@@ -13,8 +11,6 @@ const COLLAPSIBLE_THRESHOLD = 3;
 const ZEPHYR_WEBSITE_URL = "https://zephyr-cloud.io/";
 const TABLE_ROW_PATTERN =
   /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
-
-type PreviewCommentAction = "updated" | "superseded" | "closed";
 
 function truncateUrl(url: string, maxLength = 70): string {
   const ELLIPSIS = "... ↗";
@@ -26,37 +22,24 @@ function truncateUrl(url: string, maxLength = 70): string {
   return `${url.slice(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
 }
 
-function buildEnvironmentRow(
-  previewEnvironment: PreviewEnvironment,
-  status: "active" | "superseded" | "closed"
-): string {
+function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
   const url = previewEnvironment.urls[0];
-  const statusLabel = {
-    active: "🟢 Ready",
-    closed: "⚫ Deactivated",
-    superseded: "⚪ Superseded",
-  }[status];
 
-  return `| ${previewEnvironment.projectName} | ${statusLabel} | [${truncateUrl(url)}](${url}) |`;
+  return `| ${previewEnvironment.projectName} | 🟢 Ready | [${truncateUrl(url)}](${url}) |`;
 }
 
 function buildEnvironmentsTable(
-  previewEnvironments: PreviewEnvironment[],
-  status: "active" | "superseded" | "closed",
-  collapsible = true
+  previewEnvironments: PreviewEnvironment[]
 ): string {
   const rows = previewEnvironments
-    .map((previewEnvironment) =>
-      buildEnvironmentRow(previewEnvironment, status)
-    )
+    .map((previewEnvironment) => buildEnvironmentRow(previewEnvironment))
     .join("\n");
 
   const table = `| Application | Status | Preview |
 | :-- | :-- | :-- |
 ${rows}`;
 
-  const shouldCollapse =
-    collapsible && previewEnvironments.length > COLLAPSIBLE_THRESHOLD;
+  const shouldCollapse = previewEnvironments.length > COLLAPSIBLE_THRESHOLD;
 
   if (shouldCollapse) {
     return `<details>
@@ -115,7 +98,7 @@ export function mergePreviewEnvironments(
 
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[],
-  prActionType?: PreviewCommentAction
+  prActionType?: "updated"
 ): string {
   const { payload, repo } = context;
   const commitSha = payload.pull_request?.head?.sha;
@@ -132,38 +115,6 @@ export function getCommentBody(
     ? `Commit [\`${latestCommit}\`](${commitUrl})`
     : `Commit \`${latestCommit}\``;
 
-  if (prActionType === "closed" || prActionType === "superseded") {
-    const isClosed = prActionType === "closed";
-    const stateLabel = isClosed ? "Deactivated" : "Superseded";
-    const statusMarker = isClosed
-      ? PREVIEW_COMMENT_CLOSED_MARKER
-      : PREVIEW_COMMENT_SUPERSEDED_MARKER;
-    const summary = isClosed
-      ? "Zephyr preview deactivated"
-      : "Previous Zephyr preview superseded";
-    const description = isClosed
-      ? "This preview was deactivated when the pull request closed."
-      : "A newer deployment is available below in the pull request.";
-
-    return [
-      PREVIEW_COMMENT_MARKER,
-      statusMarker,
-      "<details>",
-      `<summary><strong>☁️ ${summary}</strong></summary>`,
-      "",
-      description,
-      "",
-      buildEnvironmentsTable(
-        previewEnvironments,
-        isClosed ? "closed" : "superseded",
-        false
-      ),
-      "",
-      `<sub>${commit} · ${stateLabel} ${timestamp}</sub>`,
-      "</details>",
-    ].join("\n");
-  }
-
   const actionLabel = prActionType === "updated" ? "Updated" : "Created";
 
   return [
@@ -172,7 +123,7 @@ export function getCommentBody(
     "### Preview deployment ready",
     "A fresh **Zephyr Cloud** preview is ready to review.",
     "",
-    buildEnvironmentsTable(previewEnvironments, "active"),
+    buildEnvironmentsTable(previewEnvironments),
     "",
     `<sub>${commit} · ${actionLabel} ${timestamp} · [Zephyr Cloud](${ZEPHYR_WEBSITE_URL})</sub>`,
   ].join("\n");

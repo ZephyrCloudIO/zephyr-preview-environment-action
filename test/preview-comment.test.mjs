@@ -2,12 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  findActivePreviewComment,
+  findCurrentPreviewComment,
+  findManagedPreviewComments,
   getPreviewCommentOperations,
   PREVIEW_COMMENT_ACTIVE_MARKER,
-  PREVIEW_COMMENT_CLOSED_MARKER,
   PREVIEW_COMMENT_MARKER,
-  PREVIEW_COMMENT_SUPERSEDED_MARKER,
 } from "../src/services/github/preview-comment.ts";
 
 function comment(id, body, createdAt) {
@@ -19,67 +18,84 @@ function comment(id, body, createdAt) {
   };
 }
 
-test("selects the active comment instead of a newer superseded comment", () => {
+test("selects every managed comment for deletion", () => {
+  const markedComment = comment(
+    1,
+    `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_ACTIVE_MARKER}`,
+    "2026-08-03T10:00:00Z"
+  );
+  const legacyComment = comment(
+    2,
+    "🚀 **Preview Environment Ready!**\n\n| Name | Status | URL |\n|----|----------|--------|",
+    "2026-08-03T11:00:00Z"
+  );
+  const unrelatedComment = comment(
+    3,
+    "Can we improve the Preview Environment documentation?",
+    "2026-08-03T12:00:00Z"
+  );
+
+  assert.deepEqual(
+    findManagedPreviewComments([
+      markedComment,
+      legacyComment,
+      unrelatedComment,
+    ]).map(({ id }) => id),
+    [markedComment.id, legacyComment.id]
+  );
+});
+
+test("merges from the active comment instead of inactive history", () => {
   const activeComment = comment(
     1,
     `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_ACTIVE_MARKER}`,
     "2026-08-03T10:00:00Z"
   );
-  const supersededComment = comment(
+  const inactiveComment = comment(
     2,
-    `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_SUPERSEDED_MARKER}`,
+    `${PREVIEW_COMMENT_MARKER}\n<!-- zephyr-preview-environments-status:superseded -->`,
     "2026-08-03T11:00:00Z"
   );
 
   assert.equal(
-    findActivePreviewComment([activeComment, supersededComment])?.id,
+    findCurrentPreviewComment([activeComment, inactiveComment])?.id,
     activeComment.id
   );
 });
 
-test("migrates the newest legacy preview comment", () => {
+test("migrates the newest legacy generated comment", () => {
   const olderComment = comment(
     1,
-    "Preview Environment Ready!",
+    "🚀 **Preview Environment Ready!**\n\n| Name | Status | URL |\n|----|----------|--------|",
     "2026-08-03T10:00:00Z"
   );
   const newerComment = comment(
     2,
-    PREVIEW_COMMENT_MARKER,
+    "**Preview Environment Deactivated! (deploy)**\n\n| Name | Status | URL |\n|--------|--------|--------|",
     "2026-08-03T11:00:00Z"
   );
 
   assert.equal(
-    findActivePreviewComment([olderComment, newerComment])?.id,
+    findCurrentPreviewComment([olderComment, newerComment])?.id,
     newerComment.id
   );
 });
 
-test("does not reopen an inactive preview comment", () => {
-  const closedComment = comment(
-    1,
-    `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_CLOSED_MARKER}`,
-    "2026-08-03T10:00:00Z"
-  );
-
-  assert.equal(findActivePreviewComment([closedComment]), undefined);
-});
-
-test("supersedes the active comment before creating the next deployment", () => {
+test("deletes old comments before creating the next deployment", () => {
   assert.deepEqual(getPreviewCommentOperations(true, "updated"), [
-    "supersede-active",
+    "delete-existing",
     "create-active",
   ]);
 });
 
-test("closes the active comment without creating another on PR close", () => {
+test("deletes old comments without creating another on PR close", () => {
   assert.deepEqual(getPreviewCommentOperations(true, "closed"), [
-    "close-active",
+    "delete-existing",
   ]);
   assert.deepEqual(getPreviewCommentOperations(false, "closed"), []);
 });
 
-test("creates the first deployment comment when none is active", () => {
+test("creates the first deployment comment when none exists", () => {
   assert.deepEqual(getPreviewCommentOperations(false, undefined), [
     "create-active",
   ]);

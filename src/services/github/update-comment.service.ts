@@ -3,12 +3,10 @@ import { context, getOctokit } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
+import { mergePreviewEnvironments } from "./get-comment-body.service";
 import {
-  getCommentBody,
-  mergePreviewEnvironments,
-} from "./get-comment-body.service";
-import {
-  findActivePreviewComment,
+  findCurrentPreviewComment,
+  findManagedPreviewComments,
   getPreviewCommentOperations,
 } from "./preview-comment";
 
@@ -35,15 +33,16 @@ export async function updateComment(
     per_page: 100,
   });
 
-  const activeComment = findActivePreviewComment(comments);
+  const managedComments = findManagedPreviewComments(comments);
+  const currentComment = findCurrentPreviewComment(comments);
 
   const mergedPreviewEnvironments = mergePreviewEnvironments(
-    activeComment?.body,
+    currentComment?.body,
     previewEnvironments
   );
 
   const operations = getPreviewCommentOperations(
-    Boolean(activeComment),
+    managedComments.length > 0,
     prActionType
   );
 
@@ -56,18 +55,12 @@ export async function updateComment(
       continue;
     }
 
-    if (!activeComment) {
-      throw new Error("Active preview comment not found");
+    for (const comment of managedComments) {
+      await octokit.rest.issues.deleteComment({
+        owner,
+        repo: repoName,
+        comment_id: comment.id,
+      });
     }
-
-    await octokit.rest.issues.updateComment({
-      owner,
-      repo: repoName,
-      comment_id: activeComment.id,
-      body: getCommentBody(
-        mergedPreviewEnvironments,
-        operation === "close-active" ? "closed" : "superseded"
-      ),
-    });
   }
 }

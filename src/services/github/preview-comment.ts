@@ -1,12 +1,13 @@
 export const PREVIEW_COMMENT_MARKER = "<!-- zephyr-preview-environments -->";
-export const PREVIEW_COMMENT_STATUS_MARKER_PREFIX =
-  "<!-- zephyr-preview-environments-status:";
 export const PREVIEW_COMMENT_ACTIVE_MARKER =
   "<!-- zephyr-preview-environments-status:active -->";
-export const PREVIEW_COMMENT_SUPERSEDED_MARKER =
-  "<!-- zephyr-preview-environments-status:superseded -->";
-export const PREVIEW_COMMENT_CLOSED_MARKER =
-  "<!-- zephyr-preview-environments-status:closed -->";
+
+const PREVIEW_COMMENT_STATUS_MARKER_PREFIX =
+  "<!-- zephyr-preview-environments-status:";
+const LEGACY_PREVIEW_COMMENT_TITLE_PATTERN =
+  /^(?:🚀\s*)?\*\*Preview Environment (?:Ready!|Deactivated!)(?: \([^)]+\))?\*\*$|^(?:⏳|❌)\s*\*\*Preview Environment — (?:Awaiting Approval|Deployment Rejected)\*\*$/m;
+const LEGACY_PREVIEW_COMMENT_TABLE_PATTERN =
+  /^\|\s*-{2,}\s*\|\s*-{2,}\s*\|\s*-{2,}\s*\|$/m;
 
 interface PreviewComment {
   body?: null | string;
@@ -16,10 +17,7 @@ interface PreviewComment {
 }
 
 type PullRequestAction = "closed" | "updated" | undefined;
-type PreviewCommentOperation =
-  | "close-active"
-  | "create-active"
-  | "supersede-active";
+type PreviewCommentOperation = "create-active" | "delete-existing";
 
 function getCommentTimestamp(comment: PreviewComment): number {
   return new Date(comment.updated_at ?? comment.created_at).getTime();
@@ -34,11 +32,32 @@ function findNewestComment<T extends PreviewComment>(
   )[0];
 }
 
-export function findActivePreviewComment<T extends PreviewComment>(
+function isLegacyPreviewComment(body: string): boolean {
+  return (
+    LEGACY_PREVIEW_COMMENT_TITLE_PATTERN.test(body) &&
+    LEGACY_PREVIEW_COMMENT_TABLE_PATTERN.test(body)
+  );
+}
+
+export function findManagedPreviewComments<T extends PreviewComment>(
+  comments: T[]
+): T[] {
+  return comments.filter((comment) => {
+    const body = comment.body;
+
+    return Boolean(
+      body &&
+        (body.includes(PREVIEW_COMMENT_MARKER) || isLegacyPreviewComment(body))
+    );
+  });
+}
+
+export function findCurrentPreviewComment<T extends PreviewComment>(
   comments: T[]
 ): T | undefined {
+  const managedComments = findManagedPreviewComments(comments);
   const activeComment = findNewestComment(
-    comments.filter((comment) =>
+    managedComments.filter((comment) =>
       comment.body?.includes(PREVIEW_COMMENT_ACTIVE_MARKER)
     )
   );
@@ -48,31 +67,20 @@ export function findActivePreviewComment<T extends PreviewComment>(
   }
 
   return findNewestComment(
-    comments.filter((comment) => {
-      const body = comment.body;
-
-      if (!body || body.includes(PREVIEW_COMMENT_STATUS_MARKER_PREFIX)) {
-        return false;
-      }
-
-      return (
-        body.includes(PREVIEW_COMMENT_MARKER) ||
-        body.includes("Preview Environment")
-      );
-    })
+    managedComments.filter(
+      (comment) => !comment.body?.includes(PREVIEW_COMMENT_STATUS_MARKER_PREFIX)
+    )
   );
 }
 
 export function getPreviewCommentOperations(
-  hasActiveComment: boolean,
+  hasManagedComments: boolean,
   pullRequestAction: PullRequestAction
 ): PreviewCommentOperation[] {
   const operations: PreviewCommentOperation[] = [];
 
-  if (hasActiveComment) {
-    operations.push(
-      pullRequestAction === "closed" ? "close-active" : "supersede-active"
-    );
+  if (hasManagedComments) {
+    operations.push("delete-existing");
   }
 
   if (pullRequestAction !== "closed") {
