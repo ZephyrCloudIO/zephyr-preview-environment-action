@@ -8,7 +8,7 @@ import {
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
-const ZEPHYR_WEBSITE_URL = "https://zephyr-cloud.io/";
+const ZEPHYR_WEBSITE_URL = "https://app.zephyr-cloud.io/";
 const TABLE_ROW_PATTERN =
   /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
 
