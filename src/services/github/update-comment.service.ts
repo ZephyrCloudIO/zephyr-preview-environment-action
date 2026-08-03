@@ -6,8 +6,13 @@ import { createComment } from "./create-comment.service";
 import {
   getCommentBody,
   mergePreviewEnvironments,
-  PREVIEW_COMMENT_MARKER,
 } from "./get-comment-body.service";
+import {
+  findCurrentPreviewComment,
+  findManagedPreviewComments,
+  findPersistentPreviewComment,
+  getPreviewCommentOperations,
+} from "./preview-comment";
 
 export async function updateComment(
   previewEnvironments: PreviewEnvironment[],
@@ -25,46 +30,59 @@ export async function updateComment(
 
   const { number: prNumber } = payload.pull_request;
 
-  const { data: comments } = await octokit.rest.issues.listComments({
+  const comments = await octokit.paginate(octokit.rest.issues.listComments, {
     owner,
     repo: repoName,
     issue_number: prNumber,
+    per_page: 100,
   });
 
-  const getCommentTimestamp = (comment: (typeof comments)[number]) =>
-    new Date(comment.updated_at ?? comment.created_at).getTime();
-  const findNewestMatchingComment = (marker: string) =>
-    comments
-      .filter((comment) => comment.body?.includes(marker))
-      .sort(
-        (leftComment, rightComment) =>
-          getCommentTimestamp(rightComment) - getCommentTimestamp(leftComment)
-      )[0];
-
-  const commentToUpdate =
-    findNewestMatchingComment(PREVIEW_COMMENT_MARKER) ??
-    findNewestMatchingComment("Preview Environment");
+  const managedComments = findManagedPreviewComments(comments);
+  const currentComment = findCurrentPreviewComment(comments);
+  const persistentComment = findPersistentPreviewComment(comments);
 
   const mergedPreviewEnvironments = mergePreviewEnvironments(
-    commentToUpdate?.body,
+    currentComment?.body,
     previewEnvironments
   );
 
-  const commentBody = getCommentBody(mergedPreviewEnvironments, prActionType);
+  const operations = getPreviewCommentOperations(
+    managedComments.length > 0,
+    prActionType
+  );
 
-  if (commentToUpdate) {
-    await octokit.rest.issues.updateComment({
-      owner,
-      repo: repoName,
-      comment_id: commentToUpdate.id,
-      body: commentBody,
-    });
+  for (const operation of operations) {
+    if (operation === "create-active") {
+      await createComment(mergedPreviewEnvironments);
+      continue;
+    }
 
-    return;
-  }
+    if (operation === "update-existing") {
+      if (!persistentComment) {
+        throw new Error("Persistent preview comment not found");
+      }
 
-  // Workaround to create a comment if was not created properly in the pull_request_opened or pull_request_updated event by any reason
-  if (prActionType !== "closed") {
-    await createComment(previewEnvironments);
+      await octokit.rest.issues.updateComment({
+        owner,
+        repo: repoName,
+        comment_id: persistentComment.id,
+        body: getCommentBody(mergedPreviewEnvironments),
+      });
+    }
+
+    const commentsToDelete =
+      operation === "delete-existing"
+        ? managedComments
+        : managedComments.filter(
+            (comment) => comment.id !== persistentComment?.id
+          );
+
+    for (const comment of commentsToDelete) {
+      await octokit.rest.issues.deleteComment({
+        owner,
+        repo: repoName,
+        comment_id: comment.id,
+      });
+    }
   }
 }

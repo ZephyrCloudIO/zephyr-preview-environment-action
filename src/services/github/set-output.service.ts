@@ -3,7 +3,10 @@ import type { PreviewEnvironment } from "../../types/preview-environment";
 
 export function setOutput(previewEnvironments: PreviewEnvironment[]) {
   const envMap = Object.fromEntries(
-    previewEnvironments.map((env) => [env.projectName, env])
+    previewEnvironments.map(({ projectName, urls }) => [
+      projectName,
+      { projectName, urls },
+    ])
   );
   setGhOutput("preview_environments_urls", JSON.stringify(envMap));
 }
