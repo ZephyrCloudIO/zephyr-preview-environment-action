@@ -10,7 +10,7 @@ Automatically create and manage preview environments for your pull requests usin
 - 🚀 **Creates preview environments** when PRs are opened
 - 🔄 **Updates environments** when PRs are updated
 - 🧹 **Cleans up resources** when PRs are closed
-- 💬 **Posts preview URLs** as PR comments
+- 💬 **Posts each deployment at the bottom** and collapses the superseded preview
 
 ## 🚀 Quick Start
 
@@ -44,18 +44,13 @@ jobs:
       # Your build steps here
       - name: Build Your Application
         env:
-          # Option 1: Personal Token
-          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
-
-          # Option 2: Server Token (organization-level, recommended)
-          # ZE_SERVER_TOKEN: ${{ secrets.ZE_SERVER_TOKEN }}
-          # ZE_USER_EMAIL is automatically pulled from GitHub commit author
+          ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         run: |
           # Add your build commands
           npm ci && npm run build
 
       - name: Zephyr Preview Environments
-        uses: ZephyrCloudIO/zephyr-preview-environment-action@v0.1.1
+        uses: ZephyrCloudIO/zephyr-preview-environment-action@v0.2.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -66,59 +61,20 @@ Your pull requests will now automatically get preview environments with URLs pos
 
 ## 🔐 Authentication
 
-Zephyr supports two authentication approaches for CI/CD. Choose the one that best fits your needs:
-
-### Option 1: Personal Token (User-Level)
-
-Authenticates as an individual user. Best for personal projects or when you need user-specific permissions.
+The build step authenticates to Zephyr with an organization CI token. The preview action then reads that build's deployment results and uses `github_token` only to manage pull request comments.
 
 **Setup:**
 
-1. Generate your token from **Profile Settings** in [Zephyr Cloud](https://zephyr-cloud.io/)
-2. Add `ZE_SECRET_TOKEN` to your repository secrets
+1. Generate a token from **Organization Settings → CI Tokens** in [Zephyr Cloud](https://zephyr-cloud.io/)
+2. Add it to your repository secrets as `ZE_CI_TOKEN`
 3. Use it in your workflow:
+
    ```yaml
    env:
-     ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+     ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
    ```
 
-**When to use:**
-
-- Individual developer authentication
-- Personal projects
-- User-specific permission requirements
-
-📖 [Personal Token Documentation](https://docs.zephyr-cloud.io/features/ci-cd-personal-token)
-
-### Option 2: Server Token (Organization-Level) ⭐ Recommended
-
-Authenticates at the organization level without individual user credentials. Best for team projects and shared pipelines.
-
-**Setup:**
-
-1. Generate your token from **Organization Settings** in [Zephyr Cloud](https://zephyr-cloud.io/)
-2. Add `ZE_SERVER_TOKEN` to your repository secrets
-3. Use it in your workflow:
-   ```yaml
-   env:
-     ZE_SERVER_TOKEN: ${{ secrets.ZE_SERVER_TOKEN }}
-     # ZE_USER_EMAIL is automatically pulled from GitHub context
-     # You can optionally override it:
-     # ZE_USER_EMAIL: custom@example.com
-   ```
-
-**Note:** The `ZE_USER_EMAIL` is automatically extracted from the GitHub commit author email, so you typically don't need to set it manually.
-
-**When to use:**
-
-- Organization-level authentication
-- Multiple team members sharing pipelines
-- Centralized credential management
-- GitHub Actions or GitLab CI/CD
-
-**Security:** Do not share server tokens publicly and rotate them regularly.
-
-📖 [Server Token Documentation](https://docs.zephyr-cloud.io/features/ci-cd-server-token)
+GitHub Actions automatically provides the build actor metadata used during CI token exchange. Existing server-token pipelines should follow the [CI token migration guide](https://docs.zephyr-cloud.io/migrations/ci-token-migration).
 
 ## 📋 Configuration
 

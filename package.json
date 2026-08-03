@@ -6,7 +6,8 @@
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --minify --outfile=index.js",
     "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.mjs"
   },
   "keywords": [],
   "author": "ZephyrCloudIO",

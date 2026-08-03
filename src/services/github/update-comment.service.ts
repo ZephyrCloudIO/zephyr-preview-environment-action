@@ -6,8 +6,11 @@ import { createComment } from "./create-comment.service";
 import {
   getCommentBody,
   mergePreviewEnvironments,
-  PREVIEW_COMMENT_MARKER,
 } from "./get-comment-body.service";
+import {
+  findActivePreviewComment,
+  getPreviewCommentOperations,
+} from "./preview-comment";
 
 export async function updateComment(
   previewEnvironments: PreviewEnvironment[],
@@ -25,46 +28,46 @@ export async function updateComment(
 
   const { number: prNumber } = payload.pull_request;
 
-  const { data: comments } = await octokit.rest.issues.listComments({
+  const comments = await octokit.paginate(octokit.rest.issues.listComments, {
     owner,
     repo: repoName,
     issue_number: prNumber,
+    per_page: 100,
   });
 
-  const getCommentTimestamp = (comment: (typeof comments)[number]) =>
-    new Date(comment.updated_at ?? comment.created_at).getTime();
-  const findNewestMatchingComment = (marker: string) =>
-    comments
-      .filter((comment) => comment.body?.includes(marker))
-      .sort(
-        (leftComment, rightComment) =>
-          getCommentTimestamp(rightComment) - getCommentTimestamp(leftComment)
-      )[0];
-
-  const commentToUpdate =
-    findNewestMatchingComment(PREVIEW_COMMENT_MARKER) ??
-    findNewestMatchingComment("Preview Environment");
+  const activeComment = findActivePreviewComment(comments);
 
   const mergedPreviewEnvironments = mergePreviewEnvironments(
-    commentToUpdate?.body,
+    activeComment?.body,
     previewEnvironments
   );
 
-  const commentBody = getCommentBody(mergedPreviewEnvironments, prActionType);
+  const operations = getPreviewCommentOperations(
+    Boolean(activeComment),
+    prActionType
+  );
 
-  if (commentToUpdate) {
+  for (const operation of operations) {
+    if (operation === "create-active") {
+      await createComment(
+        mergedPreviewEnvironments,
+        prActionType === "updated" ? "updated" : undefined
+      );
+      continue;
+    }
+
+    if (!activeComment) {
+      throw new Error("Active preview comment not found");
+    }
+
     await octokit.rest.issues.updateComment({
       owner,
       repo: repoName,
-      comment_id: commentToUpdate.id,
-      body: commentBody,
+      comment_id: activeComment.id,
+      body: getCommentBody(
+        mergedPreviewEnvironments,
+        operation === "close-active" ? "closed" : "superseded"
+      ),
     });
-
-    return;
-  }
-
-  // Workaround to create a comment if was not created properly in the pull_request_opened or pull_request_updated event by any reason
-  if (prActionType !== "closed") {
-    await createComment(previewEnvironments);
   }
 }

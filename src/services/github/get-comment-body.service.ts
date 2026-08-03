@@ -1,12 +1,22 @@
 import { context } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
+import {
+  PREVIEW_COMMENT_ACTIVE_MARKER,
+  PREVIEW_COMMENT_CLOSED_MARKER,
+  PREVIEW_COMMENT_MARKER,
+  PREVIEW_COMMENT_SUPERSEDED_MARKER,
+} from "./preview-comment";
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
-export const PREVIEW_COMMENT_MARKER = "<!-- zephyr-preview-environments -->";
+const ZEPHYR_LOGO_URL =
+  "https://avatars.githubusercontent.com/u/144168943?s=96&v=4";
+const ZEPHYR_WEBSITE_URL = "https://zephyr-cloud.io/";
 const TABLE_ROW_PATTERN =
   /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
+
+type PreviewCommentAction = "updated" | "superseded" | "closed";
 
 function truncateUrl(url: string, maxLength = 70): string {
   const ELLIPSIS = "... ↗";
@@ -20,29 +30,35 @@ function truncateUrl(url: string, maxLength = 70): string {
 
 function buildEnvironmentRow(
   previewEnvironment: PreviewEnvironment,
-  isActive: boolean
+  status: "active" | "superseded" | "closed"
 ): string {
   const url = previewEnvironment.urls[0];
-  const status = isActive ? "✅ Active" : "❌ Deactivated";
+  const statusLabel = {
+    active: "🟢 Ready",
+    closed: "⚫ Deactivated",
+    superseded: "⚪ Superseded",
+  }[status];
 
-  return `| ${previewEnvironment.projectName} | ${status} | [${truncateUrl(url)}](${url}) |`;
+  return `| ${previewEnvironment.projectName} | ${statusLabel} | [${truncateUrl(url)}](${url}) |`;
 }
 
 function buildEnvironmentsTable(
   previewEnvironments: PreviewEnvironment[],
-  isActive: boolean
+  status: "active" | "superseded" | "closed",
+  collapsible = true
 ): string {
   const rows = previewEnvironments
     .map((previewEnvironment) =>
-      buildEnvironmentRow(previewEnvironment, isActive)
+      buildEnvironmentRow(previewEnvironment, status)
     )
     .join("\n");
 
-  const table = `| Name | Status | URL |
-|----|----------|--------|
+  const table = `| Application | Status | Preview |
+| :-- | :-- | :-- |
 ${rows}`;
 
-  const shouldCollapse = previewEnvironments.length > COLLAPSIBLE_THRESHOLD;
+  const shouldCollapse =
+    collapsible && previewEnvironments.length > COLLAPSIBLE_THRESHOLD;
 
   if (shouldCollapse) {
     return `<details>
@@ -56,7 +72,7 @@ ${table}
 }
 
 function getPreviewEnvironmentsFromCommentBody(
-  commentBody: string | undefined
+  commentBody: null | string | undefined
 ): PreviewEnvironment[] {
   if (!commentBody) {
     return [];
@@ -81,7 +97,7 @@ function getPreviewEnvironmentsFromCommentBody(
 }
 
 export function mergePreviewEnvironments(
-  existingCommentBody: string | undefined,
+  existingCommentBody: null | string | undefined,
   previewEnvironments: PreviewEnvironment[]
 ): PreviewEnvironment[] {
   const mergedEnvironments = new Map<string, PreviewEnvironment>();
@@ -101,24 +117,52 @@ export function mergePreviewEnvironments(
 
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[],
-  prActionType?: "updated" | "closed"
+  prActionType?: PreviewCommentAction
 ): string {
-  const { payload } = context;
-  const latestCommit =
-    payload.pull_request?.head?.sha?.slice(0, SHORT_COMMIT_HASH_LENGTH) ??
-    "N/A";
-  const timestamp = new Date().toLocaleString();
+  const { payload, repo } = context;
+  const commitSha = payload.pull_request?.head?.sha;
+  const latestCommit = commitSha?.slice(0, SHORT_COMMIT_HASH_LENGTH) ?? "N/A";
+  const timestamp = `${new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date())} UTC`;
+  const commitUrl = commitSha
+    ? `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${repo.owner}/${repo.repo}/commit/${commitSha}`
+    : undefined;
+  const commit = commitUrl
+    ? `Commit [\`${latestCommit}\`](${commitUrl})`
+    : `Commit \`${latestCommit}\``;
 
-  if (prActionType === "closed") {
+  if (prActionType === "closed" || prActionType === "superseded") {
+    const isClosed = prActionType === "closed";
+    const stateLabel = isClosed ? "Deactivated" : "Superseded";
+    const statusMarker = isClosed
+      ? PREVIEW_COMMENT_CLOSED_MARKER
+      : PREVIEW_COMMENT_SUPERSEDED_MARKER;
+    const summary = isClosed
+      ? "Zephyr preview deactivated"
+      : "Previous Zephyr preview superseded";
+    const description = isClosed
+      ? "This preview was deactivated when the pull request closed."
+      : "A newer deployment is available below in the pull request.";
+
     return [
       PREVIEW_COMMENT_MARKER,
-      "**Preview Environment Deactivated!**",
+      statusMarker,
+      "<details>",
+      `<summary><strong>☁️ ${summary}</strong></summary>`,
       "",
-      buildEnvironmentsTable(previewEnvironments, false),
+      description,
       "",
-      "**Details:**",
-      `- **Latest Commit:** \`${latestCommit}\``,
-      `- **Deactivated:** ${timestamp}`,
+      buildEnvironmentsTable(
+        previewEnvironments,
+        isClosed ? "closed" : "superseded",
+        false
+      ),
+      "",
+      `<sub>${commit} · ${stateLabel} ${timestamp}</sub>`,
+      "</details>",
     ].join("\n");
   }
 
@@ -126,12 +170,14 @@ export function getCommentBody(
 
   return [
     PREVIEW_COMMENT_MARKER,
-    "🚀 **Preview Environment Ready!**",
+    PREVIEW_COMMENT_ACTIVE_MARKER,
+    `<a href="${ZEPHYR_WEBSITE_URL}"><img src="${ZEPHYR_LOGO_URL}" alt="Zephyr Cloud logo" width="48"></a>`,
     "",
-    buildEnvironmentsTable(previewEnvironments, true),
+    "### Preview deployment ready",
+    "A fresh **Zephyr Cloud** preview is ready to review.",
     "",
-    "**Details:**",
-    `- **Latest Commit:** \`${latestCommit}\``,
-    `- **${actionLabel} at:** ${timestamp}`,
+    buildEnvironmentsTable(previewEnvironments, "active"),
+    "",
+    `<sub>${commit} · ${actionLabel} ${timestamp} · [Zephyr Cloud](${ZEPHYR_WEBSITE_URL})</sub>`,
   ].join("\n");
 }
