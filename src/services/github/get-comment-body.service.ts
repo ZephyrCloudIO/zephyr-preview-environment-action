@@ -8,7 +8,7 @@ import {
   PREVIEW_COMMENT_ACTIVE_MARKER,
   PREVIEW_COMMENT_MARKER,
 } from "./preview-comment";
-import { buildPreviewLinks } from "./preview-links";
+import { buildDeploymentTargetsTable, buildVersionLink } from "./preview-links";
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
@@ -52,7 +52,7 @@ function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
     previewEnvironment.deployedAt ?? Date.now()
   );
 
-  return `| ${status} | ${previewEnvironment.projectName} | ${commitLink} | ${buildPreviewLinks(previewEnvironment)} | ${updatedAt} |`;
+  return `| ${status} | ${previewEnvironment.projectName} | ${commitLink} | ${buildVersionLink(previewEnvironment)} | ${updatedAt} |`;
 }
 
 function buildEnvironmentsTable(
@@ -62,7 +62,7 @@ function buildEnvironmentsTable(
     .map((previewEnvironment) => buildEnvironmentRow(previewEnvironment))
     .join("\n");
 
-  const table = `| Status | Name | Latest Commit | Deployment URLs | Updated (UTC) |
+  const table = `| Status | Name | Latest Commit | Version URL | Updated (UTC) |
 | :-- | :-- | :-- | :-- | :-- |
 ${rows}`;
 
@@ -201,6 +201,9 @@ export function mergePreviewEnvironments(
 export function getCommentBody(
   previewEnvironments: PreviewEnvironment[]
 ): string {
+  const deploymentTargetsTable =
+    buildDeploymentTargetsTable(previewEnvironments);
+
   return [
     PREVIEW_COMMENT_MARKER,
     PREVIEW_COMMENT_ACTIVE_MARKER,
@@ -209,5 +212,6 @@ export function getCommentBody(
     "The latest preview deployments for this pull request.",
     "",
     buildEnvironmentsTable(previewEnvironments),
+    ...(deploymentTargetsTable ? ["", deploymentTargetsTable] : []),
   ].join("\n");
 }

@@ -1,4 +1,7 @@
-import type { PreviewEnvironment } from "../../types/preview-environment";
+import type {
+  PreviewDeploymentTarget,
+  PreviewEnvironment,
+} from "../../types/preview-environment";
 
 function escapeTableLinkLabel(value: string): string {
   return value
@@ -7,29 +10,46 @@ function escapeTableLinkLabel(value: string): string {
     .replaceAll("]", "\\]");
 }
 
-function buildTargetLinks(
-  label: string,
-  targets: PreviewEnvironment["environmentUrls"]
+function buildTargetRows(
+  projectName: string,
+  type: "Environment" | "Tag",
+  targets: PreviewDeploymentTarget[] | undefined
+): string[] {
+  return (targets ?? []).map(
+    (target) =>
+      `| ${escapeTableLinkLabel(projectName)} | ${type} | [${escapeTableLinkLabel(target.name)} ↗](${target.url}) |`
+  );
+}
+
+export function buildVersionLink(
+  previewEnvironment: PreviewEnvironment
+): string {
+  return `[Version ↗](${previewEnvironment.urls[0]})`;
+}
+
+export function buildDeploymentTargetsTable(
+  previewEnvironments: PreviewEnvironment[]
 ): string | undefined {
-  if (!targets?.length) {
+  const rows = previewEnvironments.flatMap((previewEnvironment) => [
+    ...buildTargetRows(
+      previewEnvironment.projectName,
+      "Environment",
+      previewEnvironment.environmentUrls
+    ),
+    ...buildTargetRows(
+      previewEnvironment.projectName,
+      "Tag",
+      previewEnvironment.tagUrls
+    ),
+  ]);
+
+  if (rows.length === 0) {
     return undefined;
   }
 
-  const links = targets
-    .map((target) => `[${escapeTableLinkLabel(target.name)} ↗](${target.url})`)
-    .join(", ");
-  return `${label}: ${links}`;
-}
+  return `#### Affected deployment targets
 
-export function buildPreviewLinks(
-  previewEnvironment: PreviewEnvironment
-): string {
-  const previewUrl = previewEnvironment.urls[0];
-  return [
-    `[Version ↗](${previewUrl})`,
-    buildTargetLinks("Environments", previewEnvironment.environmentUrls),
-    buildTargetLinks("Tags", previewEnvironment.tagUrls),
-  ]
-    .filter(Boolean)
-    .join("<br>");
+| Application | Type | Target |
+| :-- | :-- | :-- |
+${rows.join("\n")}`;
 }
