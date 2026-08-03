@@ -35,7 +35,7 @@ jobs:
 
       - name: Build Examples
         env:
-          ZE_SECRET_TOKEN: ${{ secrets.ZE_SECRET_TOKEN }}
+          ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         run: pnpm run build:examples
 
       - name: Zephyr Preview Environments
