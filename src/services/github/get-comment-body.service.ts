@@ -1,10 +1,14 @@
 import { context } from "@actions/github";
 
-import type { PreviewEnvironment } from "../../types/preview-environment";
+import type {
+  PreviewDeploymentTarget,
+  PreviewEnvironment,
+} from "../../types/preview-environment";
 import {
   PREVIEW_COMMENT_ACTIVE_MARKER,
   PREVIEW_COMMENT_MARKER,
 } from "./preview-comment";
+import { buildPreviewLinks } from "./preview-links";
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
@@ -36,7 +40,6 @@ function getCommitDetails(): {
 }
 
 function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
-  const previewUrl = previewEnvironment.urls[0];
   const status = previewEnvironment.dashboardUrl
     ? `✅ Deployment successful!<br>[View deployment](${previewEnvironment.dashboardUrl})`
     : "✅ Deployment successful!";
@@ -49,7 +52,7 @@ function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
     previewEnvironment.deployedAt ?? Date.now()
   );
 
-  return `| ${status} | ${previewEnvironment.projectName} | ${commitLink} | [Preview URL ↗](${previewUrl}) | ${updatedAt} |`;
+  return `| ${status} | ${previewEnvironment.projectName} | ${commitLink} | ${buildPreviewLinks(previewEnvironment)} | ${updatedAt} |`;
 }
 
 function buildEnvironmentsTable(
@@ -59,7 +62,7 @@ function buildEnvironmentsTable(
     .map((previewEnvironment) => buildEnvironmentRow(previewEnvironment))
     .join("\n");
 
-  const table = `| Status | Name | Latest Commit | Preview URL | Updated (UTC) |
+  const table = `| Status | Name | Latest Commit | Deployment URLs | Updated (UTC) |
 | :-- | :-- | :-- | :-- | :-- |
 ${rows}`;
 
@@ -86,6 +89,26 @@ function getEnvironmentDataMarkers(
   });
 }
 
+function isPreviewDeploymentTarget(
+  value: unknown
+): value is PreviewDeploymentTarget {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<PreviewDeploymentTarget>;
+  return (
+    typeof candidate.name === "string" && typeof candidate.url === "string"
+  );
+}
+
+function hasValidDeploymentTargets(value: unknown): boolean {
+  return (
+    value === undefined ||
+    (Array.isArray(value) && value.every(isPreviewDeploymentTarget))
+  );
+}
+
 function isPreviewEnvironment(value: unknown): value is PreviewEnvironment {
   if (!value || typeof value !== "object") {
     return false;
@@ -95,7 +118,9 @@ function isPreviewEnvironment(value: unknown): value is PreviewEnvironment {
   return (
     typeof candidate.projectName === "string" &&
     Array.isArray(candidate.urls) &&
-    candidate.urls.every((url) => typeof url === "string")
+    candidate.urls.every((url) => typeof url === "string") &&
+    hasValidDeploymentTargets(candidate.environmentUrls) &&
+    hasValidDeploymentTargets(candidate.tagUrls)
   );
 }
 

@@ -3,10 +3,14 @@ import { context, getOctokit } from "@actions/github";
 
 import type { PreviewEnvironment } from "../../types/preview-environment";
 import { createComment } from "./create-comment.service";
-import { mergePreviewEnvironments } from "./get-comment-body.service";
+import {
+  getCommentBody,
+  mergePreviewEnvironments,
+} from "./get-comment-body.service";
 import {
   findCurrentPreviewComment,
   findManagedPreviewComments,
+  findPersistentPreviewComment,
   getPreviewCommentOperations,
 } from "./preview-comment";
 
@@ -35,6 +39,7 @@ export async function updateComment(
 
   const managedComments = findManagedPreviewComments(comments);
   const currentComment = findCurrentPreviewComment(comments);
+  const persistentComment = findPersistentPreviewComment(comments);
 
   const mergedPreviewEnvironments = mergePreviewEnvironments(
     currentComment?.body,
@@ -52,7 +57,27 @@ export async function updateComment(
       continue;
     }
 
-    for (const comment of managedComments) {
+    if (operation === "update-existing") {
+      if (!persistentComment) {
+        throw new Error("Persistent preview comment not found");
+      }
+
+      await octokit.rest.issues.updateComment({
+        owner,
+        repo: repoName,
+        comment_id: persistentComment.id,
+        body: getCommentBody(mergedPreviewEnvironments),
+      });
+    }
+
+    const commentsToDelete =
+      operation === "delete-existing"
+        ? managedComments
+        : managedComments.filter(
+            (comment) => comment.id !== persistentComment?.id
+          );
+
+    for (const comment of commentsToDelete) {
       await octokit.rest.issues.deleteComment({
         owner,
         repo: repoName,

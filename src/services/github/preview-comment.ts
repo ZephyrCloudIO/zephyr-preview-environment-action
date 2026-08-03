@@ -17,7 +17,10 @@ interface PreviewComment {
 }
 
 type PullRequestAction = "closed" | "updated" | undefined;
-type PreviewCommentOperation = "create-active" | "delete-existing";
+type PreviewCommentOperation =
+  | "create-active"
+  | "delete-existing"
+  | "update-existing";
 
 function getCommentTimestamp(comment: PreviewComment): number {
   return new Date(comment.updated_at ?? comment.created_at).getTime();
@@ -29,6 +32,16 @@ function findNewestComment<T extends PreviewComment>(
   return comments.toSorted(
     (leftComment, rightComment) =>
       getCommentTimestamp(rightComment) - getCommentTimestamp(leftComment)
+  )[0];
+}
+
+function findOldestComment<T extends PreviewComment>(
+  comments: T[]
+): T | undefined {
+  return comments.toSorted(
+    (leftComment, rightComment) =>
+      new Date(leftComment.created_at).getTime() -
+      new Date(rightComment.created_at).getTime()
   )[0];
 }
 
@@ -73,19 +86,19 @@ export function findCurrentPreviewComment<T extends PreviewComment>(
   );
 }
 
+export function findPersistentPreviewComment<T extends PreviewComment>(
+  comments: T[]
+): T | undefined {
+  return findOldestComment(findManagedPreviewComments(comments));
+}
+
 export function getPreviewCommentOperations(
   hasManagedComments: boolean,
   pullRequestAction: PullRequestAction
 ): PreviewCommentOperation[] {
-  const operations: PreviewCommentOperation[] = [];
-
-  if (hasManagedComments) {
-    operations.push("delete-existing");
+  if (pullRequestAction === "closed") {
+    return hasManagedComments ? ["delete-existing"] : [];
   }
 
-  if (pullRequestAction !== "closed") {
-    operations.push("create-active");
-  }
-
-  return operations;
+  return hasManagedComments ? ["update-existing"] : ["create-active"];
 }

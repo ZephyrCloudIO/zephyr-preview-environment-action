@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   findCurrentPreviewComment,
   findManagedPreviewComments,
+  findPersistentPreviewComment,
   getPreviewCommentOperations,
   PREVIEW_COMMENT_ACTIVE_MARKER,
   PREVIEW_COMMENT_MARKER,
@@ -18,7 +19,7 @@ function comment(id, body, createdAt) {
   };
 }
 
-test("selects every managed comment for deletion", () => {
+test("selects every managed comment for lifecycle management", () => {
   const markedComment = comment(
     1,
     `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_ACTIVE_MARKER}`,
@@ -63,6 +64,25 @@ test("merges from the active comment instead of inactive history", () => {
   );
 });
 
+test("keeps the oldest managed comment in its original position", () => {
+  const oldestComment = comment(
+    1,
+    `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_ACTIVE_MARKER}`,
+    "2026-08-03T10:00:00Z"
+  );
+  oldestComment.updated_at = "2026-08-03T12:00:00Z";
+  const newerComment = comment(
+    2,
+    `${PREVIEW_COMMENT_MARKER}\n${PREVIEW_COMMENT_ACTIVE_MARKER}`,
+    "2026-08-03T11:00:00Z"
+  );
+
+  assert.equal(
+    findPersistentPreviewComment([newerComment, oldestComment])?.id,
+    oldestComment.id
+  );
+});
+
 test("migrates the newest legacy generated comment", () => {
   const olderComment = comment(
     1,
@@ -81,10 +101,9 @@ test("migrates the newest legacy generated comment", () => {
   );
 });
 
-test("deletes old comments before creating the next deployment", () => {
+test("updates the existing comment for the next deployment", () => {
   assert.deepEqual(getPreviewCommentOperations(true, "updated"), [
-    "delete-existing",
-    "create-active",
+    "update-existing",
   ]);
 });
 

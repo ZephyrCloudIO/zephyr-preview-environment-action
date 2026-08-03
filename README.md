@@ -10,7 +10,7 @@ Automatically create and manage preview environments for your pull requests usin
 - 🚀 **Creates preview environments** when PRs are opened
 - 🔄 **Updates environments** when PRs are updated
 - 🧹 **Cleans up resources** when PRs are closed
-- 💬 **Keeps the latest deployment at the bottom** with exact dashboard links and removes old preview comments
+- 💬 **Keeps one persistent deployment comment updated in place** with exact version, environment, tag, and dashboard links
 
 ## 🚀 Quick Start
 
@@ -61,7 +61,7 @@ Your pull requests will now automatically get preview environments with URLs pos
 
 ## 🔐 Authentication
 
-The build step authenticates to Zephyr with an organization CI token. The preview action then reads that build's deployment results and uses `github_token` only to manage pull request comments.
+The build step authenticates to Zephyr with an organization CI token. The preview action then reads that build's deployment results and exchanged access token to identify exactly which environment and tag URLs point to each deployed snapshot. `github_token` is used only to manage pull request comments.
 
 **Setup:**
 
