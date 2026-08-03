@@ -8,24 +8,49 @@ import {
 
 const SHORT_COMMIT_HASH_LENGTH = 7;
 const COLLAPSIBLE_THRESHOLD = 3;
-const ZEPHYR_WEBSITE_URL = "https://app.zephyr-cloud.io/";
-const TABLE_ROW_PATTERN =
+const ZEPHYR_DASHBOARD_URL = "https://app.zephyr-cloud.io/";
+const ENVIRONMENT_DATA_MARKER_PATTERN =
+  /<!-- zephyr-preview-environment-data:([A-Za-z0-9_-]+) -->/g;
+const LEGACY_TABLE_ROW_PATTERN =
   /^\|\s*([^|]+?)\s*\|\s*[^|]*\|\s*\[[^\]]*]\(([^)]+)\)\s*\|$/gm;
 
-function truncateUrl(url: string, maxLength = 70): string {
-  const ELLIPSIS = "... ↗";
-  const ELLIPSIS_LENGTH = ELLIPSIS.length;
+function formatUtcTimestamp(timestamp: number): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date(timestamp));
+}
 
-  if (url.length <= maxLength) {
-    return url;
-  }
-  return `${url.slice(0, maxLength - ELLIPSIS_LENGTH)}${ELLIPSIS}`;
+function getCommitDetails(previewEnvironment: PreviewEnvironment): {
+  label: string;
+  url?: string;
+} {
+  const commitSha =
+    previewEnvironment.commitSha ?? context.payload.pull_request?.head?.sha;
+  const label = commitSha?.slice(0, SHORT_COMMIT_HASH_LENGTH) ?? "N/A";
+  const url = commitSha
+    ? `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${context.repo.owner}/${context.repo.repo}/commit/${commitSha}`
+    : undefined;
+
+  return { label, url };
 }
 
 function buildEnvironmentRow(previewEnvironment: PreviewEnvironment): string {
-  const url = previewEnvironment.urls[0];
+  const previewUrl = previewEnvironment.urls[0];
+  const status = previewEnvironment.dashboardUrl
+    ? `✅ Deployment successful!<br>[View deployment](${previewEnvironment.dashboardUrl})`
+    : "✅ Deployment successful!";
+  const commit = getCommitDetails(previewEnvironment);
+  const commitLabel = `\`${commit.label}\``;
+  const commitLink = commit.url
+    ? `[${commitLabel}](${commit.url})`
+    : commitLabel;
+  const updatedAt = formatUtcTimestamp(
+    previewEnvironment.deployedAt ?? Date.now()
+  );
 
-  return `| ${previewEnvironment.projectName} | 🟢 Ready | [${truncateUrl(url)}](${url}) |`;
+  return `| ${status} | ${previewEnvironment.projectName} | ${commitLink} | [Preview URL ↗](${previewUrl}) | ${updatedAt} |`;
 }
 
 function buildEnvironmentsTable(
@@ -35,13 +60,11 @@ function buildEnvironmentsTable(
     .map((previewEnvironment) => buildEnvironmentRow(previewEnvironment))
     .join("\n");
 
-  const table = `| Application | Status | Preview |
-| :-- | :-- | :-- |
+  const table = `| Status | Name | Latest Commit | Preview URL | Updated (UTC) |
+| :-- | :-- | :-- | :-- | :-- |
 ${rows}`;
 
-  const shouldCollapse = previewEnvironments.length > COLLAPSIBLE_THRESHOLD;
-
-  if (shouldCollapse) {
+  if (previewEnvironments.length > COLLAPSIBLE_THRESHOLD) {
     return `<details>
 <summary><b>${previewEnvironments.length} deployed applications (click to expand)</b></summary>
 
@@ -52,6 +75,59 @@ ${table}
   return table;
 }
 
+function getEnvironmentDataMarkers(
+  previewEnvironments: PreviewEnvironment[]
+): string[] {
+  return previewEnvironments.map((previewEnvironment) => {
+    const data = Buffer.from(JSON.stringify(previewEnvironment)).toString(
+      "base64url"
+    );
+
+    return `<!-- zephyr-preview-environment-data:${data} -->`;
+  });
+}
+
+function isPreviewEnvironment(value: unknown): value is PreviewEnvironment {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<PreviewEnvironment>;
+  return (
+    typeof candidate.projectName === "string" &&
+    Array.isArray(candidate.urls) &&
+    candidate.urls.every((url) => typeof url === "string")
+  );
+}
+
+function getPreviewEnvironmentsFromDataMarkers(
+  commentBody: string
+): PreviewEnvironment[] {
+  const previewEnvironments: PreviewEnvironment[] = [];
+
+  for (const match of commentBody.matchAll(ENVIRONMENT_DATA_MARKER_PATTERN)) {
+    const encodedEnvironment = match[1];
+
+    if (!encodedEnvironment) {
+      continue;
+    }
+
+    try {
+      const parsedEnvironment: unknown = JSON.parse(
+        Buffer.from(encodedEnvironment, "base64url").toString("utf8")
+      );
+
+      if (isPreviewEnvironment(parsedEnvironment)) {
+        previewEnvironments.push(parsedEnvironment);
+      }
+    } catch {
+      // Ignore malformed metadata and fall back to visible legacy rows.
+    }
+  }
+
+  return previewEnvironments;
+}
+
 function getPreviewEnvironmentsFromCommentBody(
   commentBody: null | string | undefined
 ): PreviewEnvironment[] {
@@ -59,19 +135,21 @@ function getPreviewEnvironmentsFromCommentBody(
     return [];
   }
 
+  const markedEnvironments = getPreviewEnvironmentsFromDataMarkers(commentBody);
+
+  if (markedEnvironments.length > 0) {
+    return markedEnvironments;
+  }
+
   const previewEnvironments: PreviewEnvironment[] = [];
 
-  let match = TABLE_ROW_PATTERN.exec(commentBody);
-
-  while (match) {
+  for (const match of commentBody.matchAll(LEGACY_TABLE_ROW_PATTERN)) {
     const projectName = match[1]?.trim();
     const url = match[2]?.trim();
 
     if (projectName && url && projectName !== "Name") {
       previewEnvironments.push({ projectName, urls: [url] });
     }
-
-    match = TABLE_ROW_PATTERN.exec(commentBody);
   }
 
   return previewEnvironments;
@@ -97,34 +175,15 @@ export function mergePreviewEnvironments(
 }
 
 export function getCommentBody(
-  previewEnvironments: PreviewEnvironment[],
-  prActionType?: "updated"
+  previewEnvironments: PreviewEnvironment[]
 ): string {
-  const { payload, repo } = context;
-  const commitSha = payload.pull_request?.head?.sha;
-  const latestCommit = commitSha?.slice(0, SHORT_COMMIT_HASH_LENGTH) ?? "N/A";
-  const timestamp = `${new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }).format(new Date())} UTC`;
-  const commitUrl = commitSha
-    ? `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${repo.owner}/${repo.repo}/commit/${commitSha}`
-    : undefined;
-  const commit = commitUrl
-    ? `Commit [\`${latestCommit}\`](${commitUrl})`
-    : `Commit \`${latestCommit}\``;
-
-  const actionLabel = prActionType === "updated" ? "Updated" : "Created";
-
   return [
     PREVIEW_COMMENT_MARKER,
     PREVIEW_COMMENT_ACTIVE_MARKER,
-    "### Preview deployment ready",
-    "A fresh **Zephyr Cloud** preview is ready to review.",
+    ...getEnvironmentDataMarkers(previewEnvironments),
+    `### Deploying with ☁️ [Zephyr Cloud](${ZEPHYR_DASHBOARD_URL})`,
+    "The latest preview deployments for this pull request.",
     "",
     buildEnvironmentsTable(previewEnvironments),
-    "",
-    `<sub>${commit} · ${actionLabel} ${timestamp} · [Zephyr Cloud](${ZEPHYR_WEBSITE_URL})</sub>`,
   ].join("\n");
 }

@@ -10,7 +10,7 @@ Automatically create and manage preview environments for your pull requests usin
 - 🚀 **Creates preview environments** when PRs are opened
 - 🔄 **Updates environments** when PRs are updated
 - 🧹 **Cleans up resources** when PRs are closed
-- 💬 **Keeps the latest deployment at the bottom** and removes old preview comments
+- 💬 **Keeps the latest deployment at the bottom** with exact dashboard links and removes old preview comments
 
 ## 🚀 Quick Start
 

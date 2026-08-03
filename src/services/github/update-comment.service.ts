@@ -48,10 +48,7 @@ export async function updateComment(
 
   for (const operation of operations) {
     if (operation === "create-active") {
-      await createComment(
-        mergedPreviewEnvironments,
-        prActionType === "updated" ? "updated" : undefined
-      );
+      await createComment(mergedPreviewEnvironments);
       continue;
     }
 

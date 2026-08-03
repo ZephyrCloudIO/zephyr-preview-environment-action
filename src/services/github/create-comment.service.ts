@@ -5,8 +5,7 @@ import type { PreviewEnvironment } from "../../types/preview-environment";
 import { getCommentBody } from "./get-comment-body.service";
 
 export async function createComment(
-  previewEnvironments: PreviewEnvironment[],
-  prActionType?: "updated"
+  previewEnvironments: PreviewEnvironment[]
 ): Promise<void> {
   const githubToken = getInput("github_token");
   const octokit = getOctokit(githubToken);
@@ -20,7 +19,7 @@ export async function createComment(
 
   const { number: prNumber } = payload.pull_request;
 
-  const commentBody = getCommentBody(previewEnvironments, prActionType);
+  const commentBody = getCommentBody(previewEnvironments);
 
   await octokit.rest.issues.createComment({
     owner,
