@@ -36,7 +36,7 @@
       "axios": "1.18.0",
       "undici": "6.28.0",
       "@isaacs/brace-expansion": ">=5.0.1",
-      "@babel/core": "7.29.6",
+      "@babel/core": "7.29.7",
       "@eslint/plugin-kit": "^0.7.0",
       "adm-zip": "0.6.0",
       "brace-expansion": "5.0.8",
