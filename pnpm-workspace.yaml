@@ -18,3 +18,5 @@ minimumReleaseAgeExclude:
   - postcss@8.5.23
   # Renovate security update: undici@6.28.0
   - undici@6.28.0
+  # Renovate security update: adm-zip@0.6.1
+  - adm-zip@0.6.1
