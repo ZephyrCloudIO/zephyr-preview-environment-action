@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
-    "@types/node": "24.13.4",
+    "@types/node": "24.13.5",
     "@types/node-persist": "3.1.8",
     "esbuild": "0.27.2",
     "husky": "9.1.7",
