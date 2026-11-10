@@ -51,6 +51,8 @@ jobs:
 
       - name: Zephyr Preview Environments
         uses: ZephyrCloudIO/zephyr-preview-environment-action@v1.0.0
+        env:
+          ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -61,13 +63,13 @@ Your pull requests will now automatically get preview environments with URLs pos
 
 ## 🔐 Authentication
 
-The build step authenticates to Zephyr with an organization CI token. The preview action then reads that build's deployment results and exchanged access token to identify exactly which environment and tag URLs point to each deployed snapshot. `github_token` is used only to manage pull request comments.
+The build step authenticates to Zephyr with an organization CI token. The preview action then reads that build's deployment results and, through `zephyr-agent`, reuses the build's exchanged access token to identify exactly which environment and tag URLs point to each deployed snapshot. The cached exchange is keyed by the CI token, so `ZE_CI_TOKEN` must be visible to the action step too (step or job `env`). Without it the action still posts version links, skips the tag and environment table, and logs a warning. `github_token` is used only to manage pull request comments.
 
 **Setup:**
 
 1. Generate a token from **Organization Settings → CI Tokens** in [Zephyr Cloud](https://zephyr-cloud.io/)
 2. Add it to your repository secrets as `ZE_CI_TOKEN`
-3. Use it in your workflow:
+3. Use it in your workflow, on both the build step and this action's step (or once in the job `env`):
 
    ```yaml
    env:

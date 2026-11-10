@@ -48,6 +48,9 @@ jobs:
       - name: Zephyr Preview Environments
         uses: ./
         id: zephyr-preview-environment-action
+        env:
+          # Reuses the build's cached CI token exchange to list affected tags and environments.
+          ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         with:
           github_token: ${{ steps.zephyr-app-token.outputs.token }}
 
