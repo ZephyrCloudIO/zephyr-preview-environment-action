@@ -24,6 +24,8 @@ Automatically create and manage preview environments for your pull requests usin
 
 Create `.github/workflows/preview-environments.yml`:
 
+<!-- x-release-please-start-version -->
+
 ```yaml
 name: Zephyr Preview Environments
 
@@ -54,6 +56,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+<!-- x-release-please-end -->
 
 ### 3. That's it! 🎉
 
@@ -87,6 +91,8 @@ To post as a Zephyr-branded bot:
 3. Store its client ID as `ZEPHYR_APP_CLIENT_ID` and private key as `ZEPHYR_APP_PRIVATE_KEY`.
 4. Generate an installation token and pass it to this action:
 
+   <!-- x-release-please-start-version -->
+
    ```yaml
    - name: Create Zephyr GitHub App token
      id: zephyr-app-token
@@ -100,6 +106,8 @@ To post as a Zephyr-branded bot:
      with:
        github_token: ${{ steps.zephyr-app-token.outputs.token }}
    ```
+
+   <!-- x-release-please-end -->
 
 Comments will then use the GitHub App's `<app-slug>[bot]` identity and profile image.
 
@@ -150,6 +158,12 @@ GitHub token lacks required scopes
 - 📖 [Zephyr Documentation](https://docs.zephyr-cloud.io/)
 - 💬 [Open an issue](https://github.com/ZephyrCloudIO/zephyr-preview-environment-action/issues)
 - 🌟 [Examples repository](https://github.com/ZephyrCloudIO/zephyr-examples)
+
+## 🚢 Releasing
+
+Releases are automated with [release-please](https://github.com/googleapis/release-please). Merge pull requests into `main` with [Conventional Commits](https://www.conventionalcommits.org/) titles (`fix:`, `feat:`, `feat!:`). A release pull request then tracks the next version, `CHANGELOG.md`, and the version in the usage snippets above. Merging it creates the `vX.Y.Z` tag and the GitHub release.
+
+`index.js` is committed, not built at release time. Run `pnpm build` in any pull request that changes `src/` or dependencies.
 
 ## 📄 License
 
