@@ -52,7 +52,7 @@ jobs:
           npm ci && npm run build
 
       - name: Zephyr Preview Environments
-        uses: ZephyrCloudIO/zephyr-preview-environment-action@v1.0.0
+        uses: ZephyrCloudIO/zephyr-preview-environment-action@v1.0.1
         env:
           ZE_CI_TOKEN: ${{ secrets.ZE_CI_TOKEN }}
         with:
@@ -104,7 +104,7 @@ To post as a Zephyr-branded bot:
        private-key: ${{ secrets.ZEPHYR_APP_PRIVATE_KEY }}
 
    - name: Zephyr Preview Environments
-     uses: ZephyrCloudIO/zephyr-preview-environment-action@v1.0.0
+     uses: ZephyrCloudIO/zephyr-preview-environment-action@v1.0.1
      with:
        github_token: ${{ steps.zephyr-app-token.outputs.token }}
    ```
