@@ -1,13 +1,11 @@
-import { homedir } from "node:os";
-import { resolve } from "node:path";
 import { warning } from "@actions/core";
-import nodePersist from "node-persist";
-import type { DeployResult } from "zephyr-agent";
+import { type DeployResult, getToken } from "zephyr-agent";
 
 import type { PreviewDeploymentTarget } from "../../types/preview-environment";
 
-const ZEPHYR_ACCESS_TOKEN_KEY = "ze-auth-token";
 const ZEPHYR_API_URL = "https://api.zephyr-cloud.io";
+const MISSING_TOKEN_WARNING =
+  "No Zephyr access token found, so affected tag and environment URLs are not listed. Expose ZE_CI_TOKEN to this action step (for example in the job env), not only to the build step.";
 let cachedAccessTokenPromise: Promise<string | undefined> | undefined;
 
 interface DeployedVersion {
@@ -96,20 +94,18 @@ export function findAffectedDeploymentTargets(
   return targets;
 }
 
+/**
+ * Resolves the token the build used. zephyr-agent reads ZE_SECRET_TOKEN, reuses the
+ * build's cached ZE_CI_TOKEN exchange (its cache key is private to the agent), or falls
+ * back to a stored login. Resolved once per run so every app shares one lookup.
+ */
 function getZephyrAccessToken(): Promise<string | undefined> {
-  const tokenFromEnvironment = process.env.ZE_SECRET_TOKEN?.trim();
-  if (tokenFromEnvironment) {
-    return Promise.resolve(tokenFromEnvironment);
-  }
-
   cachedAccessTokenPromise ??= (async () => {
-    await nodePersist.init({
-      dir: resolve(homedir(), ".zephyr", "storage"),
-      forgiveParseErrors: true,
-    });
-    const token: unknown = await nodePersist.getItem(ZEPHYR_ACCESS_TOKEN_KEY);
-
-    return typeof token === "string" && token.trim() ? token.trim() : undefined;
+    const token = (await getToken())?.trim();
+    if (!token) {
+      warning(MISSING_TOKEN_WARNING);
+    }
+    return token || undefined;
   })();
 
   return cachedAccessTokenPromise;
@@ -130,10 +126,11 @@ function getDeployedVersionsUrl(snapshot: DeployResult["snapshot"]): URL {
 }
 
 export async function getAffectedDeploymentTargets(
-  deployResult: DeployResult
+  deployResult: DeployResult,
+  resolveAccessToken: () => Promise<string | undefined> = getZephyrAccessToken
 ): Promise<AffectedDeploymentTargets> {
   try {
-    const token = await getZephyrAccessToken();
+    const token = await resolveAccessToken();
     if (!token) {
       return { environmentUrls: [], tagUrls: [] };
     }
