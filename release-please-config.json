@@ -10,10 +10,10 @@
     { "type": "revert", "section": "Reverts" },
     { "type": "docs", "section": "Documentation" },
     { "type": "build", "section": "Build system" },
-    { "type": "ci", "section": "CI" },
+    { "type": "ci", "section": "CI", "hidden": true },
     { "type": "refactor", "section": "Refactors" },
-    { "type": "test", "section": "Tests" },
-    { "type": "chore", "section": "Maintenance" }
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "chore", "section": "Maintenance", "hidden": true }
   ],
   "packages": {
     ".": {
