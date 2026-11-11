@@ -4,7 +4,7 @@
   "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --minify --inject:build/import-meta-url.js --define:import.meta.url=importMetaUrl --outfile=index.js",
+    "build": "rslib build",
     "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build",
     "prepare": "husky",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.mjs"
@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
+    "@rslib/core": "1.0.6",
     "@types/node": "24.13.5",
-    "esbuild": "0.27.2",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "typescript": "5.9.3",
