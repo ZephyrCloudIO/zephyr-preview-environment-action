@@ -16,7 +16,7 @@
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@actions/github": "^9.0.0",
-    "zephyr-agent": "1.5.0"
+    "zephyr-agent": "1.8.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
