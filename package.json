@@ -4,7 +4,7 @@
   "description": "Create preview environments using Zephyr (PR-only action)",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --minify --outfile=index.js",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --minify --inject:build/import-meta-url.js --define:import.meta.url=importMetaUrl --outfile=index.js",
     "build:examples": "cd zephyr-examples/jarvis && pnpm i && pnpm run build && cd ../hal && pnpm i && pnpm run build",
     "prepare": "husky",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.mjs"
