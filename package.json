@@ -19,7 +19,7 @@
     "zephyr-agent": "1.8.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.8",
     "@rslib/core": "1.0.7",
     "@types/node": "24.13.5",
     "husky": "9.1.7",
